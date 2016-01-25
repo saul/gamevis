@@ -85,6 +85,7 @@ AND events.session_id = :sessionId`;
 
     var intensity = parseFloat($('#intensity').val());
 
+    heatmap.clear();
     console.log('Querying...');
 
     Promise.all([
@@ -100,16 +101,13 @@ AND events.session_id = :sessionId`;
         var overviewData = require(`./overviews/${app.session.level}.json`);
 
         console.log('Query complete.');
-        heatmap.clear();
 
         var points = results.map(row => {
           var position = JSON.parse(row.position);
           var x = (position.x - overviewData.pos_x) / overviewData.scale;
           var y = (overviewData.pos_y - position.y) / overviewData.scale;
 
-          const size = 30;
-
-          return {x, y, size, intensity};
+          return {x, y, overviewData.scale, intensity};
         });
 
         heatmap.addPoints(points);
