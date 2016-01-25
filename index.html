@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+
+	<title>Gamevis</title>
+
+	<link rel="stylesheet" href="dist/css/style.css">
+	<link rel="stylesheet" href="dist/components/selectize/dist/css/selectize.bootstrap3.css">
+
+	<!-- Main dependencies -->
+	<script type="text/javascript">
+		window.$ = window.jQuery = require('./dist/components/jquery/dist/jquery.js');
+	</script>
+
+	<script src="dist/components/vue/dist/vue.js"></script>
+	<script src="dist/components/webgl-heatmap/webgl-heatmap.js"></script>
+	<script src="dist/components/selectize/dist/js/standalone/selectize.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+	<div class="container-fluid">
+		<p>
+		<form id="eventForm">
+			<div class="form-group">
+				<label for="sessionId">Session ID</label>
+				<input type="text" class="form-control" id="sessionId" value="1">
+			</div>
+
+			<div class="form-group">
+				<label for="eventName">Event name</label>
+
+				<select class="form-control" id="eventName">
+					<option v-for="event in events">{{event}}</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label for="intensity">Intensity</label>
+				<input type="text" class="form-control" id="intensity" value="0.4">
+			</div>
+
+			<div class="row filter" v-for="(index, filter) in filters" data-index="{{index}}" track-by="id">
+				<div class="col-xs-5">
+					<input type="text" class="form-control" v-model="filter.prop">
+				</div>
+
+				<div class="col-xs-1">
+					<select class="form-control" v-model="filter.constraint">
+						<option>=</option>
+						<option>&ne;</option>
+						<option>&lt;</option>
+						<option>&le;</option>
+						<option>&gt;</option>
+						<option>&ge;</option>
+					</select>
+				</div>
+
+				<div class="col-xs-5">
+					<input type="text" class="form-control" v-model="filter.value">
+				</div>
+
+				<div class="col-xs-1">
+					<button type="button" class="btn btn-default" data-action="removeFilter">
+						<span class="glyphicon glyphicon-remove"></span>
+					</button>
+				</div>
+			</div>
+
+			<button type="button" class="btn btn-default" data-action="addFilter">Add filter</button>
+
+			<button type="submit" class="btn btn-primary">Visualise</button>
+		</form>
+		</p>
+
+		<p>
+			<canvas class="viscanvas" style="background-image: url(img/overviews/de_dust2.png)"></canvas>
+		</p>
+	</div>
+</div>
+
+<script src="dist/js/app.js"></script>
+</body>
+</html>
