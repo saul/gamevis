@@ -1,0 +1,25 @@
+{
+  "name": "gamevis",
+  "description": "",
+  "main": "main.js",
+  "authors": [
+    "Saul Rennison <saul.rennison@gmail.com>"
+  ],
+  "license": "MIT",
+  "moduleType": [
+    "node"
+  ],
+  "homepage": "https://github.com/saul/gamevis",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "vue": "~1.0.15",
+    "bootstrap": "~3.3.6",
+    "selectize": "~0.12.1"
+  }
+}
