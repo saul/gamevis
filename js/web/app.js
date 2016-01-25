@@ -85,8 +85,10 @@ AND events.session_id = :sessionId`;
 
     var intensity = parseFloat($('#intensity').val());
 
+    console.log(' *** Query');
+
     heatmap.clear();
-    console.log('Querying...');
+    console.time('query');
 
     Promise.all([
         db.query(queryString, {
@@ -98,20 +100,24 @@ AND events.session_id = :sessionId`;
         })
       ])
       .spread(results => {
+        console.timeEnd('query');
+
+        console.log('Query returned %d rows', results.length);
+
         var overviewData = require(`./overviews/${app.session.level}.json`);
 
-        console.log('Query complete.');
+        console.time('render');
 
         var points = results.map(row => {
           var position = JSON.parse(row.position);
           var x = (position.x - overviewData.pos_x) / overviewData.scale;
           var y = (overviewData.pos_y - position.y) / overviewData.scale;
 
-          return {x, y, overviewData.scale, intensity};
+          return {x, y, scale: overviewData.scale, intensity};
         });
 
         heatmap.addPoints(points);
-        console.log('Render complete.');
+        console.timeEnd('render');
       });
 
     return false;
