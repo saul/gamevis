@@ -1,39 +1,58 @@
 (function () {
   "use strict";
 
+  var _ = require('lodash');
+  var Promise = require('bluebird');
   var db = require('remote').require('./js/db');
   var models = require('remote').require('./js/models');
-
-  const overviewData = {
-    pos_x: -2400,
-    pos_y: 3383,
-    scale: 4.4,
-    zoom: 1.1
-  };
 
   var app = new Vue({
     el: '#app',
     data: {
+      sessionIndex: null,
+      sessions: [],
       filters: [],
       events: []
+    },
+    computed: {
+      session: function () {
+        return this.sessions[this.sessionIndex];
+      }
     }
   });
 
-  db.query(`SELECT DISTINCT name
+  window.app = app;
+
+  var $canvas = $('canvas');
+  var heatmap = createWebGLHeatmap({canvas: $canvas[0], intensityToAlpha: true});
+
+  models.Session.findAll({
+      order: 'id',
+      attributes: ['id', 'level']
+    })
+    .then(sessions => {
+      app.sessions = sessions.map(x => _.toPlainObject(x.get({plain: true})));
+      console.log('Got sessions:', app.sessions);
+    });
+
+  $('#sessionId').change(() => {
+    heatmap.clear();
+
+    db.query(`SELECT DISTINCT name
 FROM events
 WHERE events.session_id = :sessionId
 AND events.data ? 'user_entindex'
 ORDER BY name`, {
-      type: db.QueryTypes.SELECT,
-      replacements: {sessionId: 1},
-    })
-    .then(results => {
-      app.events = results.map(x => x.name);
-      //$('#eventName').selectize();
-    });
+        type: db.QueryTypes.SELECT,
+        replacements: {sessionId: app.session.id}
+      })
+      .then(results => {
+        app.events = results.map(x => x.name);
+        console.log('Got events:', app.events);
+      });
 
-  var $canvas = $('canvas');
-  var heatmap = createWebGLHeatmap({canvas: $canvas[0], intensityToAlpha: true});
+    $canvas.css('background-image', `url(overviews/${app.session.level}.png)`);
+  });
 
   $('#eventForm').submit(e => {
     // perform the query
@@ -66,14 +85,21 @@ AND events.session_id = :sessionId`;
 
     var intensity = parseFloat($('#intensity').val());
 
-    db.query(queryString, {
-        type: db.QueryTypes.SELECT,
-        replacements: {
-          event: $('#eventName').val(),
-          sessionId: $('#sessionId').val()
-        }
-      })
-      .then(function (results) {
+    console.log('Querying...');
+
+    Promise.all([
+        db.query(queryString, {
+          type: db.QueryTypes.SELECT,
+          replacements: {
+            event: $('#eventName').val(),
+            sessionId: app.session.id
+          }
+        })
+      ])
+      .spread(results => {
+        var overviewData = require(`./overviews/${app.session.level}.json`);
+
+        console.log('Query complete.');
         heatmap.clear();
 
         var points = results.map(row => {
@@ -87,6 +113,7 @@ AND events.session_id = :sessionId`;
         });
 
         heatmap.addPoints(points);
+        console.log('Render complete.');
       });
 
     return false;
