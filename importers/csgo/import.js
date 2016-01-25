@@ -71,12 +71,14 @@ function importDemoBuffer(client, buffer, session, callback) {
 
     // Calculate the amount of time between ticks
     tickInterval = demo.header.playbackTime / demo.header.playbackTicks;
+    console.log('Tick interval', tickInterval, 'Tick rate', Math.round(1/tickInterval));
   });
 
   demo.on('tickend', tick => {
     pace.op(tick);
 
-    if ((demo.currentTick - lastEntityUpdateFlushTick) * tickInterval > ENTITY_UPDATE_TIME_INTERVAL) {
+    // if we've moved back in time, or the interval has elapsed, flush entity updates
+    if ((demo.currentTick - lastEntityUpdateFlushTick) * tickInterval > ENTITY_UPDATE_TIME_INTERVAL || demo.currentTick < lastEntityUpdateFlushTick) {
       flushAccumulatedEntityUpdates();
     }
   });
