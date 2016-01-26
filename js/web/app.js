@@ -12,7 +12,8 @@
       sessionIndex: null,
       sessions: [],
       filters: [],
-      events: []
+      events: [],
+      querying: false
     },
     computed: {
       session: function () {
@@ -52,6 +53,7 @@ ORDER BY name`, {
       });
 
     $canvas.css('background-image', `url(overviews/${app.session.level}.png)`);
+    $canvas.css('background-color', 'black');
   });
 
   $('#eventForm').submit(e => {
@@ -84,6 +86,8 @@ AND events.session_id = :sessionId`;
     });
 
     var intensity = parseFloat($('#intensity').val());
+
+    app.querying = true;
 
     console.log(' *** Query');
 
@@ -118,6 +122,8 @@ AND events.session_id = :sessionId`;
 
         heatmap.addPoints(points);
         console.timeEnd('render');
+
+        app.querying = false;
       });
 
     return false;
@@ -137,7 +143,6 @@ AND events.session_id = :sessionId`;
   $(document).on('click', '[data-action="removeFilter"]', event => {
     var $target = $(event.target);
     var index = parseInt($target.closest('.filter').attr('data-index'));
-    console.log('removing', index);
 
     app.filters.splice(index, 1);
   });

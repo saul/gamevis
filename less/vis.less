@@ -1,5 +1,58 @@
-.viscanvas {
-  background-color: black;
+.viscanvas-container {
+  background: url(../../img/checkerboard.png);
   width: 1024px;
   height: 1024px;
+}
+
+.viscanvas {
+  width: 1024px;
+  height: 1024px;
+}
+
+.filter {
+  display: flex;
+
+  select {
+    width: 4em;
+  }
+
+  > input, > select, > button {
+    &:not(:last-child) {
+      margin-right: 5px;
+    }
+  }
+}
+
+.app-main-row {
+  display: flex;
+  min-height: 100vh;
+
+  > div {
+    padding: 1em;
+  }
+}
+
+.app-col-filters {
+  background-color: @gray-lighter;
+}
+
+.loading-icon {
+  width: 1.6em;
+  height: 1.6em;
+  margin: -.3em;
+  border-radius: 50%;
+  display: inline-block;
+  border: solid 2px transparent;
+  border-top-color: @input-border;
+  animation: rotate 1s infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
