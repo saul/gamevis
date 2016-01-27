@@ -1,23 +1,11 @@
 var Sequelize = require('sequelize');
 var db = require('./db');
 
-var Session = db.define('session', {
-  level: {type: Sequelize.STRING, allowNull: false}
-});
-
-var Player = db.define('player', {
-  tick: {type: Sequelize.INTEGER, allowNull: false},
-  name: {type: Sequelize.STRING, allowNull: false},
-  guid: {type: Sequelize.INTEGER, allowNull: false},
-  data: {type: Sequelize.JSONB, allowNull: false}
-});
-
-Player.belongsTo(Session, {allowNull: false});
-
 var Event = db.define('event', {
   tick: {type: Sequelize.INTEGER, allowNull: false},
   name: {type: Sequelize.STRING, allowNull: false},
-  data: {type: Sequelize.JSONB, allowNull: false}
+  data: {type: Sequelize.JSONB, allowNull: false},
+  entities: {type: Sequelize.JSONB}
 }, {
   indexes: [
     {
@@ -27,11 +15,14 @@ var Event = db.define('event', {
       fields: ['data'],
       using: 'gin',
       operator: 'jsonb_ops'
+    },
+    {
+      fields: ['entities'],
+      using: 'gin',
+      operator: 'jsonb_ops'
     }
   ]
 });
-
-Event.belongsTo(Session, {allowNull: false});
 
 var EntityProp = db.define('entity_prop', {
   index: {type: Sequelize.INTEGER, allowNull: false},
@@ -55,7 +46,15 @@ var EntityProp = db.define('entity_prop', {
   ]
 });
 
-EntityProp.belongsTo(Session, {allowNull: false});
+var Session = db.define('session', {
+  title: {type: Sequelize.STRING, allowNull: false},
+  level: {type: Sequelize.STRING, allowNull: false},
+  game: {type: Sequelize.STRING, allowNull: false},
+  data: {type: Sequelize.JSONB}
+});
+
+Session.hasMany(Event, {allowNull: false, onDelete: 'cascade'});
+Session.hasMany(EntityProp, {allowNull: false, onDelete: 'cascade'});
 
 module.exports = {
   Session,

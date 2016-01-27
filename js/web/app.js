@@ -9,16 +9,13 @@
   var app = new Vue({
     el: '#app',
     data: {
-      sessionIndex: null,
+      selectedSession: null,
+      selectedEvent: null,
+      selectedEntity: null,
       sessions: [],
       filters: [],
       events: [],
       querying: false
-    },
-    computed: {
-      session: function () {
-        return this.sessions[this.sessionIndex];
-      }
     }
   });
 
@@ -28,8 +25,8 @@
   var heatmap = createWebGLHeatmap({canvas: $canvas[0], intensityToAlpha: true});
 
   models.Session.findAll({
-      order: 'id',
-      attributes: ['id', 'level']
+      attributes: ['id', 'level', 'title', 'game'],
+      order: [['id', 'DESC']]
     })
     .then(sessions => {
       app.sessions = sessions.map(x => _.toPlainObject(x.get({plain: true})));
@@ -39,20 +36,26 @@
   $('#sessionId').change(() => {
     heatmap.clear();
 
-    db.query(`SELECT DISTINCT name
+    db.query(`SELECT DISTINCT ON (name) name, entities
 FROM events
 WHERE events.session_id = :sessionId
-AND events.data ? 'user_entindex'
+AND events.entities IS NOT NULL
 ORDER BY name`, {
         type: db.QueryTypes.SELECT,
-        replacements: {sessionId: app.session.id}
+        replacements: {sessionId: app.selectedSession.id}
       })
       .then(results => {
-        app.events = results.map(x => x.name);
+        app.events = results.map(row => {
+          return {
+            name: row.name,
+            entities: _.keys(row.entities)
+          }
+        });
+
         console.log('Got events:', app.events);
       });
 
-    $canvas.css('background-image', `url(overviews/${app.session.level}.png)`);
+    $canvas.css('background-image', `url(overviews/${app.selectedSession.level}.png)`);
     $canvas.css('background-color', 'black');
   });
 
@@ -61,9 +64,9 @@ ORDER BY name`, {
     var queryString = `SELECT *, ((
 	SELECT entity_props.value
 	FROM entity_props
-	WHERE entity_props.index = (events.data->>'user_entindex')::int
+	WHERE entity_props.index = (events.entities->> :entity )::int
 	AND entity_props.tick <= events.tick
-	AND entity_props.prop = 'DT_CSLocalPlayerExclusive.m_vecOrigin'
+	AND entity_props.prop = 'position'
 	AND entity_props.session_id = events.session_id
 	ORDER BY entity_props.tick DESC
 	LIMIT 1
@@ -76,7 +79,7 @@ AND events.session_id = :sessionId`;
       queryString += `\nAND ((
 	SELECT entity_props.value
 	FROM entity_props
-	WHERE entity_props.index = (events.data->>'user_entindex')::int
+	WHERE entity_props.index = (events.entities->>${db.escape(app.selectedEntity)})::int
 	AND entity_props.tick <= events.tick
 	AND entity_props.prop = ${db.escape(filter.prop)}
 	AND entity_props.session_id = events.session_id
@@ -94,21 +97,20 @@ AND events.session_id = :sessionId`;
     heatmap.clear();
     console.time('query');
 
-    Promise.all([
-        db.query(queryString, {
-          type: db.QueryTypes.SELECT,
-          replacements: {
-            event: $('#eventName').val(),
-            sessionId: app.session.id
-          }
-        })
-      ])
-      .spread(results => {
+    db.query(queryString, {
+        type: db.QueryTypes.SELECT,
+        replacements: {
+          event: app.selectedEvent.name,
+          sessionId: app.selectedSession.id,
+          entity: app.selectedEntity
+        }
+      })
+      .then(results => {
         console.timeEnd('query');
 
         console.log('Query returned %d rows', results.length);
 
-        var overviewData = require(`./overviews/${app.session.level}.json`);
+        var overviewData = require(`./overviews/${app.selectedSession.level}.json`);
 
         console.time('render');
 

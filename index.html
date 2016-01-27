@@ -29,9 +29,9 @@
 						<div class="form-group">
 							<label for="sessionId">Session</label>
 
-							<select class="form-control" id="sessionId" v-model="sessionIndex">
-								<option v-for="(index, session) in sessions" value="{{index}}">
-									[{{session.id}}] {{session.level}}
+							<select class="form-control" id="sessionId" v-model="selectedSession">
+								<option v-for="session in sessions" :value="session" :selected="$index == 0">
+									{{session.title}} [{{session.level}} on {{session.game}}]
 								</option>
 							</select>
 						</div>
@@ -39,19 +39,30 @@
 						<div class="form-group">
 							<label for="eventName">Event</label>
 
-							<select class="form-control" id="eventName">
-								<option v-for="event in events">{{event}}</option>
+							<select class="form-control" id="eventName" v-model="selectedEvent">
+								<option v-for="event in events" :value="event">{{event.name}}</option>
 							</select>
 						</div>
 
+						<div class="form-group" v-if="selectedEvent">
+							<label>Plot</label>
+
+							<div class="radio" v-for="entity in selectedEvent.entities">
+								<label>
+									<input type="radio" name="entityRadio" v-model="selectedEntity" :value="entity" :checked="$index == 0">
+									{{entity | capitalize}}
+								</label>
+							</div>
+						</div>
+
 						<div class="form-group">
-							<label for="intensity">Intensity</label>
+							<label for="intensity">Point intensity</label>
 							<input type="text" class="form-control" id="intensity" value="0.4">
 						</div>
 
 						<label>{{filters.length | pluralize 'Entity property filter'}} ({{filters.length}})</label>
 
-						<div class="filter form-group" v-for="(index, filter) in filters" data-index="{{index}}" track-by="id">
+						<div class="filter form-group" v-for="filter in filters" :data-index="$index" track-by="id">
 							<input type="text" class="form-control" v-model="filter.prop">
 
 							<select class="form-control" v-model="filter.constraint">
