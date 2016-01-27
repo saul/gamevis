@@ -32,6 +32,7 @@
     "pg-hstore": "^2.3.2",
     "pg-native": "^1.10.0",
     "q": "^1.4.1",
-    "sequelize": "^3.17.3"
+    "sequelize": "^3.17.3",
+    "xxhash": "^0.2.3"
   }
 }
