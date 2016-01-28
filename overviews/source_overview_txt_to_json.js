@@ -14,7 +14,7 @@ function convertFile(file, data) {
   data.split('\n')
     .map(x => x.trim())
     .forEach(line => {
-      var matches = line.match(/^"(pos_x|pos_y|scale)"\s+"(\S+)"/);
+      var matches = line.match(/^\"?(pos_x|pos_y|scale)\"?\s+"?(\S+)"?/);
 
       if (!matches) {
         return;
