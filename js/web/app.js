@@ -55,7 +55,7 @@ ORDER BY name`, {
         console.log('Got events:', app.events);
       });
 
-    $canvas.css('background-image', `url(overviews/${app.selectedSession.level}.png)`);
+    $canvas.css('background-image', `url(overviews/${app.selectedSession.game}/${app.selectedSession.level}.png)`);
     $canvas.css('background-color', 'black');
   });
 
@@ -110,7 +110,7 @@ AND events.session_id = :sessionId`;
 
         console.log('Query returned %d rows', results.length);
 
-        var overviewData = require(`./overviews/${app.selectedSession.level}.json`);
+        var overviewData = require(`./overviews/${app.selectedSession.game}/${app.selectedSession.level}.json`);
 
         console.time('render');
 
