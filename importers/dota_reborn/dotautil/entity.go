@@ -1,16 +1,16 @@
 package dotautil
 
 import (
-	"reflect"
-	"github.com/dotabuff/manta"
 	"errors"
+	"github.com/dotabuff/manta"
+	"reflect"
 )
 
 func coordFromCell(cell uint32, f float32) float32 {
 	CELL_BITS := uint32(7)
 	MAX_COORD_INTEGER := int32(16384)
 
-	return float32(int32(cell * (1 << CELL_BITS)) - MAX_COORD_INTEGER) + f
+	return float32(int32(cell*(1<<CELL_BITS))-MAX_COORD_INTEGER) + f
 }
 
 func GetEntityLocation(pe *manta.PacketEntity) (*Vector3, error) {

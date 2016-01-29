@@ -1,9 +1,9 @@
 package dotautil
 
 import (
-	"log"
-	"encoding/json"
 	"database/sql"
+	"encoding/json"
+	"log"
 	"sync"
 )
 
