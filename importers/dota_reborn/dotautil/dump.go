@@ -1,8 +1,8 @@
 package dotautil
 
 import (
-	"github.com/dotabuff/manta"
 	"fmt"
+	"github.com/dotabuff/manta"
 )
 
 func DumpStringTables(p *manta.Parser) {

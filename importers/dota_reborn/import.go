@@ -1,6 +1,7 @@
 package main
 
 import (
+	"./dotautil"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -11,7 +12,6 @@ import (
 	"os"
 	"reflect"
 	"strings"
-	"./dotautil"
 )
 
 type PropValueColumn struct {
@@ -19,11 +19,11 @@ type PropValueColumn struct {
 }
 
 type EventRow struct {
-	Tick     uint32
-	Name     string
-	Data     interface{}
+	Tick      uint32
+	Name      string
+	Data      interface{}
 	Locations interface{}
-	Entities interface{}
+	Entities  interface{}
 }
 
 func processPropChange(pe *manta.PacketEntity, prop string, value interface{}) (string, *PropValueColumn, error) {
@@ -133,18 +133,18 @@ func main() {
 
 			playerEnt, found := dotautil.LookupEntityByPropValue(parser, "m_iPlayerID", playerId)
 			if found {
-				entities["player " + keySuffix] = playerEnt.Index
+				entities["player "+keySuffix] = playerEnt.Index
 			} else {
 				log.Println("unable to find player ID", playerId)
 			}
 
 			heroEnt, found := heroes[playerId]
 			if found {
-				entities["hero " + keySuffix] = heroEnt.Index
+				entities["hero "+keySuffix] = heroEnt.Index
 
 				loc, err := dotautil.GetEntityLocation(heroEnt)
 				if err == nil {
-					locations["hero " + keySuffix] = *loc
+					locations["hero "+keySuffix] = *loc
 				} else {
 					log.Println("getEntityLocation:", err)
 				}
@@ -183,7 +183,7 @@ func main() {
 		entities := make(map[string]int32)
 
 		if cle.LocationX != nil && cle.LocationY != nil {
-			locations["event"] = dotautil.Vector3 {cle.GetLocationX(), cle.GetLocationY(), 0}
+			locations["event"] = dotautil.Vector3{cle.GetLocationX(), cle.GetLocationY(), 0}
 		}
 
 		if cle.EventLocation != nil {
@@ -264,7 +264,7 @@ func main() {
 		}
 
 		// flush buffered updates if enough ticks have passed
-		if (parser.Tick - lastFlush) > ENTITY_UPDATE_BUFFER_TICKS || lastFlush > parser.Tick {
+		if (parser.Tick-lastFlush) > ENTITY_UPDATE_BUFFER_TICKS || lastFlush > parser.Tick {
 			updates.Flush(sessionId, propStream)
 			lastFlush = parser.Tick
 		}
