@@ -36,7 +36,7 @@
   $('#sessionId').change(() => {
     heatmap.clear();
 
-    db.query(`SELECT DISTINCT ON (name) name, locations
+    db.query(`SELECT DISTINCT ON (name) name, locations, entities
 FROM events
 WHERE events.session_id = :sessionId
 AND events.locations IS NOT NULL
@@ -48,7 +48,8 @@ ORDER BY name`, {
         app.events = results.map(row => {
           return {
             name: row.name,
-            locations: _.keys(row.locations)
+            locations: _.keys(row.locations),
+            entities: _.keys(row.entities)
           }
         });
 
@@ -67,21 +68,22 @@ ORDER BY name`, {
       AND events.session_id = :sessionId
       AND events.locations ? :location`;
 
-    // TODO: reimplement filters
-    /*
     app.filters.forEach(filter => {
-      queryString += `\nAND ((
-        SELECT entity_props.value
-        FROM entity_props
-        WHERE entity_props.index = (events.entities->>${db.escape(app.selectedEntity)})::int
-        AND entity_props.tick <= events.tick
-        AND entity_props.prop = ${db.escape(filter.prop)}
-        AND entity_props.session_id = events.session_id
-        ORDER BY entity_props.tick DESC
-        LIMIT 1
-      )->>'value')::text = ${db.escape(filter.value)}`;
+      if (filter.target === '_event') {
+        queryString += `\nAND events.data->>${db.escape(filter.prop)} = ${db.escape(filter.value)}`;
+      } else {
+        queryString += `\nAND ((
+          SELECT entity_props.value
+          FROM entity_props
+          WHERE entity_props.index = (events.entities->>${db.escape(filter.target)})::int
+          AND entity_props.tick <= events.tick
+          AND entity_props.prop = ${db.escape(filter.prop)}
+          AND entity_props.session_id = events.session_id
+          ORDER BY entity_props.tick DESC
+          LIMIT 1
+        )->>'value')::text = ${db.escape(filter.value)}`;
+      }
     });
-    */
 
     var intensity = parseFloat($('#intensity').val());
 
@@ -131,6 +133,7 @@ ORDER BY name`, {
   $('[data-action="addFilter"]').click(() => {
     app.filters.push({
       id: uid++,
+      target: null,
       prop: '',
       constraint: '=',
       value: ''
