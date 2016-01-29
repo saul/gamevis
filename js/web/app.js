@@ -2,6 +2,7 @@
   "use strict";
 
   const _ = require('lodash');
+  const Promise = require('bluebird');
   const db = require('remote').require('./js/db');
   const models = require('remote').require('./js/models');
 
@@ -17,9 +18,23 @@
       sessions: [],
       filters: [],
       events: [],
+      alerts: [],
       querying: false,
     },
     methods: {
+      onError(error) {
+        this.alerts.push({
+          className: 'danger',
+          headline: 'Unexpected error',
+          stack: error.stack
+        })
+      },
+      dismissAlert(event) {
+        let $target = $(event.target);
+        let index = parseInt($target.closest('.alert').attr('data-index'));
+
+        this.alerts.splice(index, 1);
+      },
       refreshSessions() {
         models.Session.findAll({
             attributes: ['id', 'level', 'title', 'game'],
@@ -28,7 +43,8 @@
           .then(sessions => {
             this.sessions = sessions.map(x => _.toPlainObject(x.get({plain: true})));
             console.log('Got sessions:', this.sessions);
-          });
+          })
+          .catch(this.onError.bind(this));
       },
       addFilter() {
         this.filters.push({
@@ -108,7 +124,8 @@
             console.timeEnd('render');
 
             this.querying = false;
-          });
+          })
+          .catch(this.onError.bind(this));
       }
     },
     ready() {
@@ -117,6 +134,8 @@
 
       this.$watch('selectedSession', () => {
         heatmap.clear();
+
+        this.events = [];
 
         db.query(`SELECT DISTINCT ON (name) name, locations, entities
 FROM events
@@ -136,7 +155,8 @@ ORDER BY name`, {
             });
 
             console.log('Got events:', this.events);
-          });
+          })
+          .catch(this.onError.bind(this));
 
         $canvas.css('background-image', `url(overviews/${this.selectedSession.game}/${this.selectedSession.level}.png)`);
         $canvas.css('background-color', 'black');
