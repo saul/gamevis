@@ -15,13 +15,24 @@
 
 	<script src="dist/components/vue/dist/vue.js"></script>
 	<script src="dist/components/webgl-heatmap/webgl-heatmap.js"></script>
-	<script src="dist/components/selectize/dist/js/standalone/selectize.js"></script>
+	<script src="dist/components/bootstrap/dist/js/bootstrap.js"></script>
 </head>
 
 <body>
 
 <template id="app">
 	<div class="container-fluid app-container">
+		<div class="alerts-container" v-if="alerts.length">
+			<div v-for="alert in alerts" class="alert alert-dismissible" :class="['alert-' + alert.className]" role="alert" :data-index="$index">
+				<button type="button" class="close" @click="dismissAlert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+				<h4 class="alert-heading">{{ alert.headline }}</h4>
+				<p v-if="alert.text">{{ alert.text }}</p>
+
+				<pre v-if="alert.stack">{{ alert.stack }}</pre>
+			</div>
+		</div>
+
 		<div class="row app-main-row">
 			<div class="col-xs-4 app-col-filters">
 				<form @submit.prevent="updateVis">
