@@ -16,22 +16,27 @@
       filters: [],
       events: [],
       querying: false
+    },
+    methods: {
+      refreshSessions: function () {
+        models.Session.findAll({
+            attributes: ['id', 'level', 'title', 'game'],
+            order: [['id', 'DESC']]
+          })
+          .then(sessions => {
+            this.sessions = sessions.map(x => _.toPlainObject(x.get({plain: true})));
+            console.log('Got sessions:', this.sessions);
+          });
+      }
     }
   });
 
   window.app = app;
 
+  app.refreshSessions();
+
   var $canvas = $('canvas');
   var heatmap = createWebGLHeatmap({canvas: $canvas[0], intensityToAlpha: true});
-
-  models.Session.findAll({
-      attributes: ['id', 'level', 'title', 'game'],
-      order: [['id', 'DESC']]
-    })
-    .then(sessions => {
-      app.sessions = sessions.map(x => _.toPlainObject(x.get({plain: true})));
-      console.log('Got sessions:', app.sessions);
-    });
 
   $('#sessionId').change(() => {
     heatmap.clear();

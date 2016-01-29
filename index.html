@@ -25,15 +25,23 @@
 		<div class="row app-main-row">
 			<div class="col-xs-4 app-col-filters">
 				<form id="eventForm">
-					<fieldset v-bind:disabled="querying">
+					<fieldset :disabled="querying">
 						<div class="form-group">
 							<label for="sessionId">Session</label>
 
-							<select class="form-control" id="sessionId" v-model="selectedSession">
-								<option v-for="session in sessions" :value="session" :selected="$index == 0">
-									{{session.title}} [{{session.level}} on {{session.game}}]
-								</option>
-							</select>
+							<div class="input-group">
+								<select class="form-control" id="sessionId" v-model="selectedSession">
+									<option v-for="session in sessions" :value="session" :selected="$index == 0">
+										{{session.title}} [{{session.level}} on {{session.game}}]
+									</option>
+								</select>
+
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button" @click="refreshSessions">
+										<span class="glyphicon glyphicon-refresh"></span>
+									</button>
+								</span>
+							</div>
 						</div>
 
 						<div class="form-group">
