@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/dotabuff/manta"
 	"github.com/dotabuff/manta/dota"
@@ -12,14 +11,8 @@ import (
 	"os"
 	"reflect"
 	"strings"
-	"sync"
+	"./dotautil"
 )
-
-type PropValueVector struct {
-	X float32 `json:"x"`
-	Y float32 `json:"y"`
-	Z float32 `json:"z"`
-}
 
 type PropValueColumn struct {
 	Value interface{} `json:"value"`
@@ -29,70 +22,8 @@ type EventRow struct {
 	Tick     uint32
 	Name     string
 	Data     interface{}
+	Locations interface{}
 	Entities interface{}
-}
-
-type BufferedPropUpdate struct {
-	Tick  uint32
-	Value interface{}
-}
-
-type EntityPropMap map[int32]map[string]BufferedPropUpdate
-
-type BufferedUpdates struct {
-	Entities EntityPropMap
-	WG       sync.WaitGroup
-}
-
-func (u *BufferedUpdates) Buffer(index int32, prop string, tick uint32, value interface{}) {
-	entity, found := u.Entities[index]
-
-	if found {
-		entity[prop] = BufferedPropUpdate{tick, value}
-	} else {
-		u.Entities[index] = map[string]BufferedPropUpdate{prop: BufferedPropUpdate{tick, value}}
-	}
-}
-
-func (u *BufferedUpdates) Flush(sessionId int, stream *sql.Stmt) {
-	if len(u.Entities) == 0 {
-		return
-	}
-
-	u.WG.Add(1)
-
-	go func(entities EntityPropMap) {
-		defer u.WG.Done()
-
-		for index, props := range entities {
-			for prop, update := range props {
-				jsonValue, err := json.Marshal(update.Value)
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				_, err = stream.Exec(sessionId, index, update.Tick, prop, string(jsonValue))
-				if err != nil {
-					log.Fatal(err)
-				}
-			}
-		}
-	}(u.Entities)
-
-	u.Entities = make(EntityPropMap)
-}
-
-func NewBufferedUpdates() *BufferedUpdates {
-	return &BufferedUpdates{
-		Entities: make(EntityPropMap),
-	}
-}
-
-func coordFromCell(cell uint32, f float32) float32 {
-	CELL_BITS := uint32(7)
-	MAX_COORD_INTEGER := int32(16384)
-
-	return float32(int32(cell * (1 << CELL_BITS)) - MAX_COORD_INTEGER) + f
 }
 
 func processPropChange(pe *manta.PacketEntity, prop string, value interface{}) (string, *PropValueColumn, error) {
@@ -103,35 +34,9 @@ func processPropChange(pe *manta.PacketEntity, prop string, value interface{}) (
 		"CBodyComponentBaseAnimatingOverlay.m_vecX",
 		"CBodyComponentBaseAnimatingOverlay.m_vecY",
 		"CBodyComponentBaseAnimatingOverlay.m_vecZ":
-		cellX, found := pe.FetchUint64("CBodyComponentBaseAnimatingOverlay.m_cellX")
-		if !found {
-			return "", nil, errors.New("no cellX")
-		}
-		cellY, found := pe.FetchUint64("CBodyComponentBaseAnimatingOverlay.m_cellY")
-		if !found {
-			return "", nil, errors.New("no cellY")
-		}
-		cellZ, found := pe.FetchUint64("CBodyComponentBaseAnimatingOverlay.m_cellZ")
-		if !found {
-			return "", nil, errors.New("no cellZ")
-		}
-		x, found := pe.FetchFloat32("CBodyComponentBaseAnimatingOverlay.m_vecX")
-		if !found {
-			return "", nil, errors.New("no vecX")
-		}
-		y, found := pe.FetchFloat32("CBodyComponentBaseAnimatingOverlay.m_vecY")
-		if !found {
-			return "", nil, errors.New("no vecY")
-		}
-		z, found := pe.FetchFloat32("CBodyComponentBaseAnimatingOverlay.m_vecZ")
-		if !found {
-			return "", nil, errors.New("no vecZ")
-		}
-
-		vec := PropValueVector{
-			coordFromCell(uint32(cellX), x),
-			coordFromCell(uint32(cellY), y),
-			coordFromCell(uint32(cellZ), z),
+		vec, err := dotautil.GetEntityLocation(pe)
+		if err != nil {
+			return "", nil, err
 		}
 
 		return "position", &PropValueColumn{
@@ -176,7 +81,8 @@ func main() {
 		"CDOTAGamerules.m_iFoWFrameNumber":                        true,
 	}
 	entities := make(map[int32](*manta.Properties))
-	updates := NewBufferedUpdates()
+	heroes := make(map[int32](*manta.PacketEntity)) // player id -> hero
+	updates := dotautil.NewBufferedUpdates()
 	lastFlush := uint32(0)
 	ENTITY_UPDATE_BUFFER_TICKS := uint32(15) // accumulate buffer updates for `n` ticks before flushing
 
@@ -208,6 +114,64 @@ func main() {
 		return nil
 	})
 
+	parser.Callbacks.OnCDOTAUserMsg_ChatEvent(func(ce *dota.CDOTAUserMsg_ChatEvent) error {
+		row := &EventRow{
+			Tick: parser.Tick,
+			Name: strings.ToLower(ce.GetType().String()),
+			Data: ce,
+		}
+
+		locations := make(map[string]dotautil.Vector3)
+		entities := make(map[string]int32)
+
+		processPlayerIdForEvent := func(keySuffix string, playerIdOpt *int32) {
+			if playerIdOpt == nil || *playerIdOpt == -1 {
+				return
+			}
+
+			playerId := *playerIdOpt
+
+			playerEnt, found := dotautil.LookupEntityByPropValue(parser, "m_iPlayerID", playerId)
+			if found {
+				entities["player " + keySuffix] = playerEnt.Index
+			} else {
+				log.Println("unable to find player ID", playerId)
+			}
+
+			heroEnt, found := heroes[playerId]
+			if found {
+				entities["hero " + keySuffix] = heroEnt.Index
+
+				loc, err := dotautil.GetEntityLocation(heroEnt)
+				if err == nil {
+					locations["hero " + keySuffix] = *loc
+				} else {
+					log.Println("getEntityLocation:", err)
+				}
+			} else {
+				log.Println("chat event player", playerId, "has no hero")
+			}
+		}
+
+		processPlayerIdForEvent("1", ce.Playerid_1)
+		processPlayerIdForEvent("2", ce.Playerid_2)
+		processPlayerIdForEvent("3", ce.Playerid_3)
+		processPlayerIdForEvent("4", ce.Playerid_4)
+		processPlayerIdForEvent("5", ce.Playerid_5)
+		processPlayerIdForEvent("6", ce.Playerid_6)
+
+		if len(locations) > 0 {
+			row.Locations = locations
+		}
+
+		if len(entities) > 0 {
+			row.Entities = entities
+		}
+
+		events = append(events, row)
+		return nil
+	})
+
 	parser.Callbacks.OnCMsgDOTACombatLogEntry((func(cle *dota.CMsgDOTACombatLogEntry) error {
 		row := &EventRow{
 			Tick: parser.Tick,
@@ -215,22 +179,39 @@ func main() {
 			Data: cle,
 		}
 
-		entities := make(map[string]uint32)
+		locations := make(map[string]dotautil.Vector3)
+		entities := make(map[string]int32)
 
-		if cle.GetTargetName() > 0 {
-			entities["target"] = cle.GetTargetName()
+		if cle.LocationX != nil && cle.LocationY != nil {
+			locations["event"] = dotautil.Vector3 {cle.GetLocationX(), cle.GetLocationY(), 0}
 		}
-		if cle.GetTargetSourceName() > 0 {
-			entities["target source"] = cle.GetTargetSourceName()
+
+		if cle.EventLocation != nil {
+			playerId := int32(cle.GetEventLocation())
+
+			playerEnt, found := dotautil.LookupEntityByPropValue(parser, "m_iPlayerID", playerId)
+			if found {
+				entities["player"] = playerEnt.Index
+			} else {
+				log.Println("event referring to non-existent player ID")
+			}
+
+			heroEnt, found := heroes[playerId]
+			if found {
+				loc, err := dotautil.GetEntityLocation(heroEnt)
+
+				if err == nil {
+					locations["hero"] = *loc
+				} else {
+					log.Println("getEntityLocation: ", err)
+				}
+			} else {
+				log.Println("combat log player", playerId, "has no hero")
+			}
 		}
-		if cle.GetAttackerName() > 0 {
-			entities["attacker"] = cle.GetAttackerName()
-		}
-		if cle.GetDamageSourceName() > 0 {
-			entities["damage source"] = cle.GetDamageSourceName()
-		}
-		if cle.GetInflictorName() > 0 {
-			entities["inflictor"] = cle.GetInflictorName()
+
+		if len(locations) > 0 {
+			row.Locations = locations
 		}
 
 		if len(entities) > 0 {
@@ -240,6 +221,39 @@ func main() {
 		events = append(events, row)
 		return nil
 	}))
+
+	const MAX_CLIENTS = 64
+	const NUM_ENT_ENTRY_BITS = 14
+	const NUM_ENT_ENTRIES = 1 << NUM_ENT_ENTRY_BITS
+	const ENT_ENTRY_MASK = NUM_ENT_ENTRIES - 1
+
+	parser.OnPacketEntity(func(pe *manta.PacketEntity, event manta.EntityEventType) error {
+		if pe.ClassName != "CDOTA_PlayerResource" {
+			return nil
+		}
+
+		for i := int32(0); i < MAX_CLIENTS; i++ {
+			heroProp := fmt.Sprintf("m_vecPlayerTeamData.%04d.m_hSelectedHero", i)
+			heroHandle, found := pe.FetchUint32(heroProp)
+			if !found {
+				continue
+			}
+
+			heroEntry := heroHandle & ENT_ENTRY_MASK
+			if heroEntry == ENT_ENTRY_MASK {
+				continue
+			}
+
+			heroEnt, found := parser.PacketEntities[int32(heroEntry)]
+			if !found {
+				log.Fatal("could not find entity pointed by handle")
+			}
+
+			heroes[i] = heroEnt
+		}
+
+		return nil
+	})
 
 	parser.OnPacketEntity(func(pe *manta.PacketEntity, event manta.EntityEventType) error {
 		if event == manta.EntityEventType_Create {
@@ -305,7 +319,7 @@ func main() {
 		fmt.Println("ok")
 
 		fmt.Print("Opening events stream...")
-		eventStream, err := txn.Prepare(pq.CopyIn("events", "session_id", "tick", "name", "data", "entities") + " WITH NULL 'null'")
+		eventStream, err := txn.Prepare(pq.CopyIn("events", "session_id", "tick", "name", "data", "locations", "entities") + " WITH NULL 'null'")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -317,12 +331,17 @@ func main() {
 				log.Fatal(err)
 			}
 
+			locationsJson, err := json.Marshal(event.Locations)
+			if err != nil {
+				log.Fatal(err)
+			}
+
 			entitiesJson, err := json.Marshal(event.Entities)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			_, err = eventStream.Exec(sessionId, event.Tick, event.Name, string(dataJson), string(entitiesJson))
+			_, err = eventStream.Exec(sessionId, event.Tick, event.Name, string(dataJson), string(locationsJson), string(entitiesJson))
 			if err != nil {
 				log.Fatal(err)
 			}

@@ -22,11 +22,12 @@ function importDemoBuffer(client, buffer, session_id, callback) {
   var tickInterval;
   var lastEntityUpdateFlushTick = 0;
   var bufferedEntityUpdates = new Map();
+  var entityPositions = {};
 
   // Skip uninteresting properties that change often
   var skipProps = ['m_flSimulationTime', 'm_nTickBase', 'm_flGroundAccelLinearFracLastTime', 'm_nResetEventsParity', 'm_nNewSequenceParity', 'm_nAnimationParity'];
 
-  var eventStream = client.query(copyFrom("COPY events (session_id, tick, name, data, entities) FROM STDIN WITH NULL 'null'"));
+  var eventStream = client.query(copyFrom("COPY events (session_id, tick, name, data, locations, entities) FROM STDIN WITH NULL 'null'"));
 
   var tempDeferredFilename = 'deferred_' + Math.random() + '.tmp';
   var entityPropStream = fs.createWriteStream(tempDeferredFilename);
@@ -150,6 +151,8 @@ function importDemoBuffer(client, buffer, session_id, callback) {
         y: coordFromCell(cellY, cellPos.y),
         z: coordFromCell(cellZ, cellPos.z)
       };
+
+      entityPositions[e.entity.index] = newValue;
     } else if (fullPropName === 'DT_CSLocalPlayerExclusive.m_vecOrigin') {
       fullPropName = 'position';
 
@@ -163,6 +166,8 @@ function importDemoBuffer(client, buffer, session_id, callback) {
         y: e.newValue.y,
         z
       };
+
+      entityPositions[e.entity.index] = newValue;
     } else if (fullPropName === 'DT_CSLocalPlayerExclusive.m_vecOrigin[2]') {
       fullPropName = 'position';
 
@@ -176,6 +181,8 @@ function importDemoBuffer(client, buffer, session_id, callback) {
         y: xyPos.y,
         z: e.newValue
       };
+
+      entityPositions[e.entity.index] = newValue;
     }
 
     var updateHash = XXHash.hash(new Buffer(e.entity.index + fullPropName), 0xCAFEBABE);
@@ -191,6 +198,7 @@ function importDemoBuffer(client, buffer, session_id, callback) {
 
   demo.gameEvents.on('event', e => {
     var entities = {};
+    var locations = {};
     var anyEntities = false;
 
     function addEntity(key, index) {
@@ -202,6 +210,8 @@ function importDemoBuffer(client, buffer, session_id, callback) {
       }
 
       entities[key] = index;
+      locations[key] = entityPositions[index];
+
       anyEntities = true;
     }
 
@@ -243,6 +253,7 @@ function importDemoBuffer(client, buffer, session_id, callback) {
       demo.currentTick,
       e.name,
       e.event,
+      anyEntities ? locations : null,
       anyEntities ? entities : null
     ]);
 
