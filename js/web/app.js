@@ -11,7 +11,7 @@
     data: {
       selectedSession: null,
       selectedEvent: null,
-      selectedEntity: null,
+      selectedLocation: null,
       sessions: [],
       filters: [],
       events: [],
@@ -36,10 +36,10 @@
   $('#sessionId').change(() => {
     heatmap.clear();
 
-    db.query(`SELECT DISTINCT ON (name) name, entities
+    db.query(`SELECT DISTINCT ON (name) name, locations
 FROM events
 WHERE events.session_id = :sessionId
-AND events.entities IS NOT NULL
+AND events.locations IS NOT NULL
 ORDER BY name`, {
         type: db.QueryTypes.SELECT,
         replacements: {sessionId: app.selectedSession.id}
@@ -48,7 +48,7 @@ ORDER BY name`, {
         app.events = results.map(row => {
           return {
             name: row.name,
-            entities: _.keys(row.entities)
+            locations: _.keys(row.locations)
           }
         });
 
@@ -61,32 +61,27 @@ ORDER BY name`, {
 
   $('#eventForm').submit(e => {
     // perform the query
-    var queryString = `SELECT *, ((
-	SELECT entity_props.value
-	FROM entity_props
-	WHERE entity_props.index = (events.entities->> :entity )::int
-	AND entity_props.tick <= events.tick
-	AND entity_props.prop = 'position'
-	AND entity_props.session_id = events.session_id
-	ORDER BY entity_props.tick DESC
-	LIMIT 1
-)->>'value') AS position
-FROM events
-WHERE events.name = :event
-AND events.session_id = :sessionId`;
+    var queryString = `SELECT *, (events.locations ->> :location) AS position
+      FROM events
+      WHERE events.name = :event
+      AND events.session_id = :sessionId
+      AND events.locations ? :location`;
 
+    // TODO: reimplement filters
+    /*
     app.filters.forEach(filter => {
       queryString += `\nAND ((
-	SELECT entity_props.value
-	FROM entity_props
-	WHERE entity_props.index = (events.entities->>${db.escape(app.selectedEntity)})::int
-	AND entity_props.tick <= events.tick
-	AND entity_props.prop = ${db.escape(filter.prop)}
-	AND entity_props.session_id = events.session_id
-	ORDER BY entity_props.tick DESC
-	LIMIT 1
-)->>'value')::text = ${db.escape(filter.value)}`;
+        SELECT entity_props.value
+        FROM entity_props
+        WHERE entity_props.index = (events.entities->>${db.escape(app.selectedEntity)})::int
+        AND entity_props.tick <= events.tick
+        AND entity_props.prop = ${db.escape(filter.prop)}
+        AND entity_props.session_id = events.session_id
+        ORDER BY entity_props.tick DESC
+        LIMIT 1
+      )->>'value')::text = ${db.escape(filter.value)}`;
     });
+    */
 
     var intensity = parseFloat($('#intensity').val());
 
@@ -102,7 +97,7 @@ AND events.session_id = :sessionId`;
         replacements: {
           event: app.selectedEvent.name,
           sessionId: app.selectedSession.id,
-          entity: app.selectedEntity
+          location: app.selectedLocation
         }
       })
       .then(results => {

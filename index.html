@@ -47,10 +47,10 @@
 						<div class="form-group" v-if="selectedEvent">
 							<label>Plot</label>
 
-							<div class="radio" v-for="entity in selectedEvent.entities">
+							<div class="radio" v-for="location in selectedEvent.locations">
 								<label>
-									<input type="radio" name="entityRadio" v-model="selectedEntity" :value="entity" :checked="$index == 0">
-									{{entity | capitalize}}
+									<input type="radio" name="locationRadio" v-model="selectedLocation" :value="location" :checked="$index == 0">
+									{{location | capitalize}}
 								</label>
 							</div>
 						</div>

@@ -5,6 +5,7 @@ var Event = db.define('event', {
   tick: {type: Sequelize.INTEGER, allowNull: false},
   name: {type: Sequelize.STRING, allowNull: false},
   data: {type: Sequelize.JSONB, allowNull: false},
+  locations: {type: Sequelize.JSONB},
   entities: {type: Sequelize.JSONB}
 }, {
   indexes: [
