@@ -28,7 +28,6 @@
       this.$watch('gradientPath', () => {
         let image = new Image();
         image.onload = () => {
-          console.log('reset texture gradient');
           return this.heatmap.gradientTexture.bind().upload(image);
         };
         image.src = this.gradientPath;
@@ -38,7 +37,7 @@
 
   Vue.component('vis-query-form', {
     template: '#queryForm',
-    props: ['heatmap', 'enabled', 'gradientPath', 'gradientTextures'],
+    props: ['heatmap', 'enabled', 'gradientPath', 'gradientTextures', 'readyToVisualise'],
     replace: false,
     data: function () {
       return {
@@ -194,7 +193,6 @@ ORDER BY name`, {
     },
     computed: {
       readyToVisualise() {
-        console.log('readyToVisualise');
         return this.queries.reduce((memo, q) => memo && q.readyToVisualise, true);
       }
     },
@@ -231,7 +229,8 @@ ORDER BY name`, {
           id: Math.random(),
           selected: false,
           heatmap: null,
-          gradientPath: null
+          gradientPath: null,
+          readyToVisualise: false
         });
 
         this.switchQueryTab(i - 1);

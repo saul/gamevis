@@ -151,7 +151,7 @@
 
 				<form @submit.prevent="visualise">
 					<div class="tab-content">
-						<div v-for="query in queries" role="tabpanel" class="tab-pane" :class="{'active': query.selected}" is="vis-query-form" :enabled="!querying" :heatmap.sync="query.heatmap" :gradient-path.sync="query.gradientPath" :gradient-textures="gradientTextures" v-ref:query track-by="id">
+						<div v-for="query in queries" role="tabpanel" class="tab-pane" :class="{'active': query.selected}" is="vis-query-form" :enabled="!querying" :heatmap.sync="query.heatmap" :gradient-path.sync="query.gradientPath" :gradient-textures="gradientTextures" :ready-to-visualise.sync="query.readyToVisualise" v-ref:query track-by="id">
 						</div>
 					</div>
 
