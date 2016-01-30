@@ -19,11 +19,108 @@
 
 <body>
 
+<template id="visCanvas">
+	<canvas class="visualisation__canvas"></canvas>
+</template>
+
+<template id="queryForm">
+	<fieldset :disabled="!enabled">
+		<div class="form-group">
+			<label for="sessionId">Session</label>
+
+			<div class="input-group">
+				<select class="form-control" id="sessionId" v-model="selectedSession" :disabled="selectedSession.length == 0">
+					<option v-for="session in sessions" :value="session" :selected="$index == 0">
+						{{session.title}} [{{session.level}} on {{session.game}}]
+					</option>
+				</select>
+
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="button" @click="refreshSessions">
+							<span class="glyphicon glyphicon-refresh"></span>
+						</button>
+					</span>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label>Colour gradient</label>
+
+			<select class="form-control" v-model="gradientPath" :disabled="gradientTextures.length == 0">
+				<option v-for="gradient in gradientTextures" value="{{ gradient.path }}">
+					{{ gradient.baseName | capitalize }}
+				</option>
+			</select>
+		</div>
+
+		<fieldset :disabled="selectedSession == null">
+			<div class="form-group">
+				<label for="eventName">Event</label>
+
+				<select class="form-control" id="eventName" v-model="selectedEvent" :disabled="events.length == 0">
+					<option v-for="event in events" :value="event">{{event.name}}</option>
+				</select>
+			</div>
+
+			<div class="form-group" v-if="selectedEvent">
+				<label>Plot</label>
+
+				<div class="radio" v-for="location in selectedEvent.locations">
+					<label>
+						<input type="radio" v-model="selectedLocation" :value="location" :checked="$index == 0">
+						{{location | capitalize}}
+					</label>
+				</div>
+			</div>
+		</fieldset>
+
+		<fieldset :disabled="selectedEvent == null">
+			<label>{{filters.length | pluralize 'Filter'}} ({{filters.length}})</label>
+
+			<div class="session-form__filter form-group" v-for="filter in filters" track-by="id">
+				<select class="form-control" v-model="filter.target">
+					<option value="_event">Event</option>
+					<option v-for="entity in selectedEvent.entities" :value="entity" :selected="$index == 0">
+						{{entity | capitalize}}
+					</option>
+				</select>
+
+				<input type="text" class="form-control" v-model="filter.prop">
+
+				<select class="form-control" v-model="filter.constraint">
+					<option>=</option>
+					<!--
+					<option>&ne;</option>
+					<option>&lt;</option>
+					<option>&le;</option>
+					<option>&gt;</option>
+					<option>&ge;</option>
+					-->
+				</select>
+
+				<input type="text" class="form-control" v-model="filter.value">
+
+				<button type="button" class="btn btn-danger" @click="removeFilter($index)">
+					<span class="glyphicon glyphicon-minus-sign"></span>
+				</button>
+			</div>
+
+			<div class="form-group clearfix">
+				<button type="button" class="btn btn-default pull-right" @click="addFilter">
+					<span class="glyphicon glyphicon-filter"></span>
+				</button>
+			</div>
+		</fieldset>
+	</fieldset>
+</template>
+
 <template id="app">
 	<div class="container-fluid">
 		<div class="alerts" v-if="alerts.length">
-			<div v-for="alert in alerts" class="alert alert-dismissible" :class="['alert-' + alert.className]" role="alert" :data-index="$index">
-				<button type="button" class="close" @click="dismissAlert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<div v-for="alert in alerts" class="alert alert-dismissible" :class="['alert-' + alert.className]" role="alert">
+				<button type="button" class="close" @click="dismissAlert($index)" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
 
 				<h4 class="alert-heading">{{ alert.headline }}</h4>
 				<p v-if="alert.text">{{ alert.text }}</p>
@@ -34,106 +131,52 @@
 
 		<div class="row app-row__main">
 			<div class="col-xs-4 main-panel__filters">
-				<form @submit.prevent="updateVis">
-					<fieldset :disabled="querying">
-						<div class="form-group">
-							<label for="sessionId">Session</label>
+				<ul class="nav nav-pills" role="tablist">
+					<li role="presentation" v-for="query in queries" @click="switchQueryTab($index)" :class="{'active': query.selected}">
+						<a href="#" role="tab">
+							<button type="button" class="close" @click.stop="closeQuery($index)" aria-label="Close">
+								<span aria-hidden="true">×</span>
+							</button>
 
-							<div class="input-group">
-								<select class="form-control" id="sessionId" v-model="selectedSession">
-									<option v-for="session in sessions" :value="session" :selected="$index == 0">
-										{{session.title}} [{{session.level}} on {{session.game}}]
-									</option>
-								</select>
+							#{{ $index + 1 }}
+						</a>
+					</li>
 
-								<span class="input-group-btn">
-									<button class="btn btn-default" type="button" @click="refreshSessions">
-										<span class="glyphicon glyphicon-refresh"></span>
-									</button>
-								</span>
-							</div>
+					<li role="presentation">
+						<a href="#" @click="addQuery">
+							<span class="glyphicon glyphicon-plus"></span>
+						</a>
+					</li>
+				</ul>
+
+				<form @submit.prevent="visualise">
+					<div class="tab-content">
+						<div v-for="query in queries" role="tabpanel" class="tab-pane" :class="{'active': query.selected}" is="vis-query-form" :enabled="!querying" :heatmap.sync="query.heatmap" :gradient-path.sync="query.gradientPath" :gradient-textures="gradientTextures" v-ref:query track-by="id">
 						</div>
+					</div>
 
-						<fieldset :disabled="selectedSession == null">
-							<div class="form-group">
-								<label for="eventName">Event</label>
+					<hr/>
 
-								<select class="form-control" id="eventName" v-model="selectedEvent">
-									<option v-for="event in events" :value="event">{{event.name}}</option>
-								</select>
-							</div>
+					<div class="form-group">
+						<label for="intensity">Point intensity</label>
+						<input type="text" class="form-control" id="intensity" v-model="intensity">
+					</div>
 
-							<div class="form-group" v-if="selectedEvent">
-								<label>Plot</label>
-
-								<div class="radio" v-for="location in selectedEvent.locations">
-									<label>
-										<input type="radio" name="locationRadio" v-model="selectedLocation" :value="location" :checked="$index == 0">
-										{{location | capitalize}}
-									</label>
-								</div>
-							</div>
-						</fieldset>
-
-						<fieldset :disabled="selectedEvent == null">
-							<label>{{filters.length | pluralize 'Filter'}} ({{filters.length}})</label>
-
-							<div class="session-form__filter form-group" v-for="filter in filters" :data-index="$index" track-by="id">
-								<select class="form-control" v-model="filter.target">
-									<option value="_event">Event</option>
-									<option v-for="entity in selectedEvent.entities" :value="entity" :selected="$index == 0">
-										{{entity | capitalize}}
-									</option>
-								</select>
-
-								<input type="text" class="form-control" v-model="filter.prop">
-
-								<select class="form-control" v-model="filter.constraint">
-									<option>=</option>
-									<!--
-									<option>&ne;</option>
-									<option>&lt;</option>
-									<option>&le;</option>
-									<option>&gt;</option>
-									<option>&ge;</option>
-									-->
-								</select>
-
-								<input type="text" class="form-control" v-model="filter.value">
-
-								<button type="button" class="btn btn-danger" @click="removeFilter">
-									<span class="glyphicon glyphicon-minus-sign"></span>
-								</button>
-							</div>
-
-							<div class="form-group clearfix">
-								<button type="button" class="btn btn-default pull-right" @click="addFilter">
-									<span class="glyphicon glyphicon-filter"></span>
-								</button>
-							</div>
-						</fieldset>
-
-						<div class="form-group">
-							<label for="intensity">Point intensity</label>
-							<input type="text" class="form-control" id="intensity" value="0.4">
-						</div>
-
-						<button type="submit" class="btn btn-success btn-lg btn-block" :disabled="selectedEvent == null">
-							<template v-if="querying">
-								<span class="loading-icon"></span>
-							</template>
-							<template v-else>
-								<span class="glyphicon glyphicon-eye-open"></span>
-								Visualise
-							</template>
-						</button>
-					</fieldset>
+					<button type="submit" class="btn btn-success btn-lg btn-block">
+						<template v-if="querying">
+							<span class="loading-icon"></span>
+						</template>
+						<template v-else>
+							<span class="glyphicon glyphicon-eye-open"></span>
+							Visualise
+						</template>
+					</button>
 				</form>
 			</div>
 
 			<div class="col-xs-8">
-				<div class="visualisation">
-					<canvas class="visualisation__canvas"></canvas>
+				<div class="visualisation" v-el:canvas-backdrop>
+					<vis-canvas v-for="query in queries" :heatmap.sync="query.heatmap" track-by=id :gradient-path="query.gradientPath"></vis-canvas>
 				</div>
 			</div>
 		</div>

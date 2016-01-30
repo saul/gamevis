@@ -6,15 +6,32 @@
   z-index: @zindex-navbar-fixed;
 }
 
+.nav-pills {
+  margin-bottom: @line-height-computed;
+
+  .close {
+    margin-left: 7px;
+    margin-top: -1px;
+
+    color: @link-color;
+
+    &:hover {
+      color: @link-hover-color;
+    }
+  }
+}
+
 .visualisation {
+  position: relative;
   background: url(../../img/checkerboard.png);
   width: 1024px;
   height: 1024px;
 }
 
 .visualisation__canvas {
-  width: 1024px;
-  height: 1024px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 .session-form__filter {

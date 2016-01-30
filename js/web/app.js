@@ -3,138 +3,55 @@
 
   const _ = require('lodash');
   const Promise = require('bluebird');
+  const fs = require('fs');
+  const path = require('path');
+  const assert = require('assert');
+
   const db = require('remote').require('./js/db');
   const models = require('remote').require('./js/models');
 
-  let $canvas = null;
-  let heatmap = null;
+  // path to the gradient textures directory
+  const GRADIENT_BASE = 'img/gradients';
 
-  const app = new Vue({
-    el: '#app',
-    data: {
-      selectedSession: null,
-      selectedEvent: null,
-      selectedLocation: null,
-      sessions: [],
-      filters: [],
-      events: [],
-      alerts: [],
-      querying: false,
-    },
-    methods: {
-      onError(error) {
-        this.alerts.push({
-          className: 'danger',
-          headline: 'Unexpected error',
-          stack: error.stack
-        })
-      },
-      dismissAlert(event) {
-        let $target = $(event.target);
-        let index = parseInt($target.closest('.alert').attr('data-index'));
+  Vue.component('vis-canvas', {
+    template: '#visCanvas',
+    props: ['heatmap', 'gradientPath'],
+    ready() {
+      this.heatmap = createWebGLHeatmap({
+        canvas: this.$el,
+        intensityToAlpha: true,
+        gradientTexture: 'img/gradients/spectrum.png'
+      });
 
-        this.alerts.splice(index, 1);
-      },
-      refreshSessions() {
-        models.Session.findAll({
-            attributes: ['id', 'level', 'title', 'game'],
-            order: [['id', 'DESC']]
-          })
-          .then(sessions => {
-            this.sessions = sessions.map(x => _.toPlainObject(x.get({plain: true})));
-            console.log('Got sessions:', this.sessions);
-          })
-          .catch(this.onError.bind(this));
-      },
-      addFilter() {
-        this.filters.push({
-          id: Math.random(),
-          target: null,
-          prop: '',
-          constraint: '=',
-          value: ''
-        });
-      },
-      removeFilter(event) {
-        let $target = $(event.target);
-        let index = parseInt($target.closest('.filter').attr('data-index'));
+      this.$watch('gradientPath', () => {
+        let image = new Image();
+        image.onload = () => {
+          console.log('reset texture gradient');
+          return this.heatmap.gradientTexture.bind().upload(image);
+        };
+        image.src = this.gradientPath;
+      });
+    }
+  });
 
-        this.filters.splice(index, 1);
-      },
-      updateVis() {
-        // perform the query
-        let queryString = `SELECT *, (events.locations ->> :location) AS position
-      FROM events
-      WHERE events.name = :event
-      AND events.session_id = :sessionId
-      AND events.locations ? :location`;
-
-        this.filters.forEach(filter => {
-          if (filter.target === '_event') {
-            queryString += `\nAND events.data->>${db.escape(filter.prop)} = ${db.escape(filter.value)}`;
-          } else {
-            queryString += `\nAND ((
-          SELECT entity_props.value
-          FROM entity_props
-          WHERE entity_props.index = (events.entities->>${db.escape(filter.target)})::int
-          AND entity_props.tick <= events.tick
-          AND entity_props.prop = ${db.escape(filter.prop)}
-          AND entity_props.session_id = events.session_id
-          ORDER BY entity_props.tick DESC
-          LIMIT 1
-        )->>'value')::text = ${db.escape(filter.value)}`;
-          }
-        });
-
-        let intensity = parseFloat($('#intensity').val());
-
-        this.querying = true;
-
-        console.log(' *** Query');
-
-        heatmap.clear();
-        console.time('query');
-
-        db.query(queryString, {
-            type: db.QueryTypes.SELECT,
-            replacements: {
-              event: this.selectedEvent.name,
-              sessionId: this.selectedSession.id,
-              location: this.selectedLocation
-            }
-          })
-          .then(results => {
-            console.timeEnd('query');
-
-            console.log('Query returned %d rows', results.length);
-
-            let overviewData = require(`./overviews/${this.selectedSession.game}/${this.selectedSession.level}.json`);
-
-            console.time('render');
-
-            let points = results.map(row => {
-              let position = JSON.parse(row.position);
-              let x = (position.x - overviewData.pos_x) / overviewData.scale;
-              let y = (overviewData.pos_y - position.y) / overviewData.scale;
-
-              return {x, y, scale: overviewData.scale, intensity};
-            });
-
-            heatmap.addPoints(points);
-            console.timeEnd('render');
-
-            this.querying = false;
-          })
-          .catch(this.onError.bind(this));
-      }
+  Vue.component('vis-query-form', {
+    template: '#queryForm',
+    props: ['heatmap', 'enabled', 'gradientPath', 'gradientTextures'],
+    replace: false,
+    data: function () {
+      return {
+        selectedSession: null,
+        selectedEvent: null,
+        selectedLocation: null,
+        sessions: [],
+        filters: [],
+        events: [],
+        points: []
+      };
     },
     ready() {
-      $canvas = $('canvas');
-      heatmap = createWebGLHeatmap({canvas: $canvas[0], intensityToAlpha: true});
-
       this.$watch('selectedSession', () => {
-        heatmap.clear();
-
+        this.points = [];
         this.events = [];
 
         db.query(`SELECT DISTINCT ON (name) name, locations, entities
@@ -156,22 +73,211 @@ ORDER BY name`, {
 
             console.log('Got events:', this.events);
           })
-          .catch(this.onError.bind(this));
+          .catch(err => this.$dispatch('error', err));
 
-        $canvas.css('background-image', `url(overviews/${this.selectedSession.game}/${this.selectedSession.level}.png)`);
-        $canvas.css('background-color', 'black');
+        $(this.$root.$els.canvasBackdrop)
+          .css('background-image', `url(overviews/${this.selectedSession.game}/${this.selectedSession.level}.png)`)
+          .css('background-color', 'black');
       });
+
+      this.$watch('points', () => {
+        if (this.heatmap == null) {
+          console.warn('no heatmap to update');
+          return;
+        }
+        this.heatmap.clear();
+        this.heatmap.addPoints(this.points);
+      });
+
+      this.refreshSessions();
+    },
+    methods: {
+      refreshSessions() {
+        models.Session.findAll({
+            attributes: ['id', 'level', 'title', 'game'],
+            order: [['id', 'DESC']]
+          })
+          .then(sessions => {
+            this.sessions = sessions.map(x => _.toPlainObject(x.get({plain: true})));
+            console.log('Got sessions:', this.sessions);
+          })
+          .catch(err => this.$dispatch('error', err));
+      },
+      addFilter() {
+        this.filters.push({
+          id: Math.random(),
+          target: null,
+          prop: '',
+          constraint: '=',
+          value: ''
+        });
+      },
+      removeFilter(index) {
+        this.filters.splice(index, 1);
+      },
+      getResults(intensity) {
+        let queryString = `SELECT *, (events.locations ->> :location) AS position
+          FROM events
+          WHERE events.name = :event
+          AND events.session_id = :sessionId
+          AND events.locations ? :location`;
+
+        this.filters.forEach(filter => {
+          if (filter.target === '_event') {
+            queryString += `\nAND events.data->>${db.escape(filter.prop)} = ${db.escape(filter.value)}`;
+          } else {
+            queryString += `\nAND ((
+              SELECT entity_props.value
+              FROM entity_props
+              WHERE entity_props.index = (events.entities->>${db.escape(filter.target)})::int
+              AND entity_props.tick <= events.tick
+              AND entity_props.prop = ${db.escape(filter.prop)}
+              AND entity_props.session_id = events.session_id
+              ORDER BY entity_props.tick DESC
+              LIMIT 1
+            )->>'value')::text = ${db.escape(filter.value)}`;
+          }
+        });
+
+        console.log(' *** Query');
+
+        this.points = [];
+        console.time('query');
+
+        return db.query(queryString, {
+            type: db.QueryTypes.SELECT,
+            replacements: {
+              event: this.selectedEvent.name,
+              sessionId: this.selectedSession.id,
+              location: this.selectedLocation
+            }
+          })
+          .then(results => {
+            console.timeEnd('query');
+
+            console.log('Query returned %d rows', results.length);
+
+            let overviewData = require(`./overviews/${this.selectedSession.game}/${this.selectedSession.level}.json`);
+
+            console.time('render');
+
+            this.points = results.map(row => {
+              let position = JSON.parse(row.position);
+              let x = (position.x - overviewData.pos_x) / overviewData.scale;
+              let y = (overviewData.pos_y - position.y) / overviewData.scale;
+
+              return {x, y, scale: overviewData.scale, intensity};
+            });
+
+            console.timeEnd('render');
+          })
+          .catch(err => this.$dispatch('error', err));
+      },
+    }
+  });
+
+  const app = new Vue({
+    el: '#app',
+    data: {
+      queries: [],
+      alerts: [],
+      intensity: 0.5,
+      querying: false,
+      gradientTextures: []
+    },
+    methods: {
+      onError(error) {
+        this.alerts.push({
+          className: 'danger',
+          headline: 'Unexpected error',
+          stack: error.stack
+        })
+      },
+      dismissAlert(index) {
+        this.alerts.splice(index, 1);
+      },
+      visualise() {
+        this.querying = true;
+
+        Promise.map(
+          this.$refs.query,
+          q => q.getResults(this.intensity)
+        ).then(() => {
+          this.querying = false;
+        });
+      },
+      addQuery() {
+        let i = this.queries.push({
+          id: Math.random(),
+          selected: false,
+          heatmap: null,
+          gradientPath: null
+        });
+
+        this.switchQueryTab(i - 1);
+      },
+      closeQuery(index) {
+        console.log('closeQuery', index);
+
+        // find index of the selected tab
+        let selectedIndex = this.queries.findIndex(q => q.selected);
+
+        this.queries.splice(index, 1);
+
+        let closedSelected = index == selectedIndex;
+
+        // no choice if there's no tabs remaining or only 1 left
+        if (this.queries.length === 0) {
+          return this.addQuery();
+        }
+        if (this.queries.length === 1) {
+          return this.switchQueryTab(0);
+        }
+
+        // if the tab was selected upon closing, switch to the tab to the left
+        if (closedSelected) {
+          return this.switchQueryTab(Math.min(index, this.queries.length - 1));
+        }
+
+        if (index > selectedIndex) {
+          return this.switchQueryTab(index - 1);
+        }
+      },
+      switchQueryTab(index) {
+        console.log('switchQueryTab', index);
+        this.queries.forEach((q, i) => {
+          q.selected = i == index
+        });
+      },
+      tick() {
+        this.queries.filter(q => q.heatmap)
+          .forEach(q => {
+            q.heatmap.update();
+            q.heatmap.display();
+          });
+
+        window.requestAnimationFrame(this.tick.bind(this));
+      },
+      updateGradients(err, files) {
+        assert.ifError(err);
+        this.gradientTextures = files.filter(name => !name.startsWith('.'))
+          .map(file => {
+            return {
+              path: path.join(GRADIENT_BASE, file),
+              baseName: path.parse(file).name
+            }
+          });
+      }
+    },
+    ready() {
+      this.addQuery();
+      this.tick();
+
+      this.$on('error', err => this.onError(err));
+
+      fs.readdir(GRADIENT_BASE, this.updateGradients.bind(this));
     }
   });
 
   window.app = app;
-  app.refreshSessions();
-
-  function tick() {
-    heatmap.update();
-    heatmap.display();
-    window.requestAnimationFrame(tick);
-  }
-
-  window.requestAnimationFrame(tick);
 })();
