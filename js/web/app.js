@@ -13,6 +13,8 @@
   // path to the gradient textures directory
   const GRADIENT_BASE = 'img/gradients';
 
+  Vue.config.debug = true;
+
   Vue.component('vis-canvas', {
     template: '#visCanvas',
     props: ['heatmap', 'gradientPath'],
@@ -48,6 +50,11 @@
         events: [],
         points: []
       };
+    },
+    computed: {
+      readyToVisualise() {
+        return this.selectedSession && this.selectedEvent && this.selectedLocation && this.gradientPath;
+      }
     },
     ready() {
       this.$watch('selectedSession', () => {
@@ -185,6 +192,12 @@ ORDER BY name`, {
       querying: false,
       gradientTextures: []
     },
+    computed: {
+      readyToVisualise() {
+        console.log('readyToVisualise');
+        return this.queries.reduce((memo, q) => memo && q.readyToVisualise, true);
+      }
+    },
     methods: {
       onError(error) {
         this.alerts.push({
@@ -197,6 +210,13 @@ ORDER BY name`, {
         this.alerts.splice(index, 1);
       },
       visualise() {
+        if (!this.readyToVisualise) {
+          return this.alerts.push({
+            className: 'warning',
+            headline: 'All inputs must be complete to visualise'
+          });
+        }
+
         this.querying = true;
 
         Promise.map(
