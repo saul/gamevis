@@ -29,7 +29,7 @@
 			<label for="sessionId">Session</label>
 
 			<div class="input-group">
-				<select class="form-control" id="sessionId" v-model="selectedSession" :disabled="selectedSession.length == 0">
+				<select class="form-control" id="sessionId" v-model="selectedSession" :disabled="sessions.length == 0">
 					<option v-for="session in sessions" :value="session" :selected="$index == 0">
 						{{session.title}} [{{session.level}} on {{session.game}}]
 					</option>
