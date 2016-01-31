@@ -55,6 +55,11 @@
             cast: 'text'
           },
           {
+            text: '&ne;',
+            sql: '!=',
+            cast: 'text'
+          },
+          {
             text: '&lt;',
             sql: '<',
             cast: 'int'
