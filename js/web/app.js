@@ -47,7 +47,34 @@
         sessions: [],
         filters: [],
         events: [],
-        points: []
+        points: [],
+        comparators: [
+          {
+            text: '=',
+            sql: '=',
+            cast: 'text'
+          },
+          {
+            text: '&lt;',
+            sql: '<',
+            cast: 'int'
+          },
+          {
+            text: '&le;',
+            sql: '<=',
+            cast: 'int'
+          },
+          {
+            text: '&gt;',
+            sql: '>',
+            cast: 'int'
+          },
+          {
+            text: '&ge;',
+            sql: '>=',
+            cast: 'int'
+          }
+        ]
       };
     },
     computed: {
@@ -114,7 +141,7 @@ ORDER BY name`, {
           id: Math.random(),
           target: null,
           prop: '',
-          constraint: '=',
+          comparator: null,
           value: ''
         });
       },
@@ -130,7 +157,7 @@ ORDER BY name`, {
 
         this.filters.forEach(filter => {
           if (filter.target === '_event') {
-            queryString += `\nAND events.data->>${db.escape(filter.prop)} = ${db.escape(filter.value)}`;
+            queryString += `\nAND (events.data->>${db.escape(filter.prop)})::${filter.comparator.cast} ${filter.comparator.sql} ${db.escape(filter.value)}`;
           } else {
             queryString += `\nAND ((
               SELECT entity_props.value
@@ -141,7 +168,7 @@ ORDER BY name`, {
               AND entity_props.session_id = events.session_id
               ORDER BY entity_props.tick DESC
               LIMIT 1
-            )->>'value')::text = ${db.escape(filter.value)}`;
+            )->>'value')::${filter.comparator.cast} ${filter.comparator.sql} ${db.escape(filter.value)}`;
           }
         });
 

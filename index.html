@@ -87,15 +87,10 @@
 
 				<input type="text" class="form-control" v-model="filter.prop">
 
-				<select class="form-control" v-model="filter.constraint">
-					<option>=</option>
-					<!--
-					<option>&ne;</option>
-					<option>&lt;</option>
-					<option>&le;</option>
-					<option>&gt;</option>
-					<option>&ge;</option>
-					-->
+				<select class="form-control" v-model="filter.comparator">
+					<option v-for="comparator in comparators" :value="comparator">
+						{{{ comparator.text }}}
+					</option>
 				</select>
 
 				<input type="text" class="form-control" v-model="filter.value">
