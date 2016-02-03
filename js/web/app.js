@@ -113,9 +113,7 @@ ORDER BY name`, {
           })
           .catch(err => this.$dispatch('error', err));
 
-        $(this.$root.$els.canvasBackdrop)
-          .css('background-image', `url(overviews/${this.selectedSession.game}/${this.selectedSession.level}.png)`)
-          .css('background-color', 'black');
+        this.$dispatch('updateBackdrop', this.selectedSession);
       });
 
       this.$watch('points', () => {
@@ -301,13 +299,13 @@ ORDER BY name`, {
         });
       },
       tick() {
+        window.requestAnimationFrame(this.tick.bind(this));
+
         this.queries.filter(q => q.heatmap)
           .forEach(q => {
             q.heatmap.update();
             q.heatmap.display();
           });
-
-        window.requestAnimationFrame(this.tick.bind(this));
       },
       updateGradients(err, files) {
         assert.ifError(err);
@@ -320,11 +318,19 @@ ORDER BY name`, {
           });
       }
     },
+    events: {
+      error(err) {
+        this.onError(err);
+      },
+      updateBackdrop(session) {
+        $(this.$els.canvasBackdrop)
+          .css('background-image', `url(overviews/${session.game}/${session.level}.png)`)
+          .css('background-color', 'black');
+      }
+    },
     ready() {
       this.addQuery();
       this.tick();
-
-      this.$on('error', err => this.onError(err));
 
       fs.readdir(GRADIENT_BASE, this.updateGradients.bind(this));
     }
