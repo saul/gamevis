@@ -232,8 +232,8 @@ ORDER BY name`, {
       onError(error) {
         this.alerts.push({
           className: 'danger',
-          headline: 'Unexpected error',
-          stack: error.stack
+          headline: error.name,
+          text: error.message
         })
       },
       dismissAlert(index) {
@@ -252,7 +252,7 @@ ORDER BY name`, {
         Promise.map(
           this.$refs.query,
           q => q.getResults(this.intensity)
-        ).then(() => {
+        ).finally(() => {
           this.querying = false;
         });
       },
