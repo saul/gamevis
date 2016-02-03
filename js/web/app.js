@@ -15,14 +15,14 @@
 
   Vue.config.debug = true;
 
-  Vue.component('vis-canvas', {
-    template: '#visCanvas',
+  Vue.component('gv-canvas', {
+    template: '#gvCanvas',
     props: ['heatmap', 'gradientPath'],
     ready() {
       this.heatmap = createWebGLHeatmap({
         canvas: this.$el,
         intensityToAlpha: true,
-        gradientTexture: 'img/gradients/spectrum.png'
+        gradientTexture: 'img/gradients/plasma.png'
       });
 
       this.$watch('gradientPath', () => {
@@ -35,11 +35,11 @@
     }
   });
 
-  Vue.component('vis-query-form', {
+  Vue.component('gv-query-form', {
     template: '#queryForm',
     props: ['heatmap', 'enabled', 'gradientPath', 'gradientTextures', 'readyToVisualise'],
     replace: false,
-    data: function () {
+    data() {
       return {
         selectedSession: null,
         selectedEvent: null,
@@ -212,14 +212,15 @@ ORDER BY name`, {
     }
   });
 
-  const app = new Vue({
-    el: '#app',
-    data: {
-      queries: [],
-      alerts: [],
-      intensity: 0.5,
-      querying: false,
-      gradientTextures: []
+  Vue.component('gv-heatmap-visualisation', {
+    template: '#gvHeatmap',
+    data() {
+      return {
+        queries: [],
+        intensity: 0.5,
+        querying: false,
+        gradientTextures: []
+      }
     },
     computed: {
       readyToVisualise() {
@@ -227,16 +228,6 @@ ORDER BY name`, {
       }
     },
     methods: {
-      onError(error) {
-        this.alerts.push({
-          className: 'danger',
-          headline: error.name,
-          text: error.message
-        })
-      },
-      dismissAlert(index) {
-        this.alerts.splice(index, 1);
-      },
       visualise() {
         if (!this.readyToVisualise) {
           return this.alerts.push({
@@ -319,20 +310,56 @@ ORDER BY name`, {
       }
     },
     events: {
-      error(err) {
-        this.onError(err);
-      },
       updateBackdrop(session) {
         $(this.$els.canvasBackdrop)
           .css('background-image', `url(overviews/${session.game}/${session.level}.png)`)
           .css('background-color', 'black');
+      },
+      render() {
+        this.queries.filter(q => q.heatmap)
+          .forEach(q => {
+            q.heatmap.update();
+            q.heatmap.display();
+          });
+
+        // allow children to listen to this event
+        return true;
       }
     },
     ready() {
       this.addQuery();
-      this.tick();
-
       fs.readdir(GRADIENT_BASE, this.updateGradients.bind(this));
+    }
+  });
+
+  const app = new Vue({
+    el: '#app',
+    data: {
+      alerts: [],
+    },
+    methods: {
+      onError(error) {
+        this.alerts.push({
+          className: 'danger',
+          headline: error.name,
+          text: error.message
+        })
+      },
+      dismissAlert(index) {
+        this.alerts.splice(index, 1);
+      },
+      render() {
+        window.requestAnimationFrame(this.render.bind(this));
+        this.$broadcast('render');
+      },
+    },
+    events: {
+      error(err) {
+        this.onError(err);
+      }
+    },
+    ready() {
+      this.render();
     }
   });
 
