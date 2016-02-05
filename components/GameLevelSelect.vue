@@ -9,7 +9,7 @@
 <script type="text/babel">
 	const db = window.db;
 
-	module.exports = {
+	export default {
 		props: ['selected'],
 		data() {
 			return {

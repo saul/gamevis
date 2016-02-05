@@ -61,7 +61,7 @@
 	// path to the gradient textures directory
 	const GRADIENT_BASE = 'img/gradients';
 
-	module.exports = {
+	export default {
 		data() {
 			return {
 				queries: [],

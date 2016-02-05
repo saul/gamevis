@@ -26,7 +26,7 @@
 </template>
 
 <script type="text/babel">
-	module.exports = {
+	export default {
 		el: 'body',
 		replace: false,
 		data: {

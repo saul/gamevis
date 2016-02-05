@@ -9,7 +9,7 @@
 <script type="text/babel">
 	const _ = window.require('lodash');
 
-	module.exports = {
+	export default {
 		props: ['gameLevel', 'selected', 'multiple'],
 		data() {
 			return {

@@ -89,7 +89,7 @@
 	const db = window.db;
 	const models = window.models;
 
-	module.exports = {
+	export default {
 		props: ['heatmap', 'enabled', 'gradientPath', 'gradientTextures', 'readyToVisualise'],
 		replace: false,
 		data() {

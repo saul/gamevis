@@ -3,7 +3,7 @@
 </template>
 
 <script type="text/babel">
-	module.exports = {
+	export default {
 		props: ['heatmap', 'gradientPath'],
 		ready() {
 			this.heatmap = window.createWebGLHeatmap({
