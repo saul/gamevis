@@ -5,9 +5,6 @@
   require('dist/components/bootstrap/dist/js/bootstrap');
   require('dist/components/webgl-heatmap/webgl-heatmap');
 
-  const _ = window.require('lodash');
-  const assert = window.require('assert');
-
   window.db = window.require('remote').require('./js/db');
   window.models = window.require('remote').require('./js/models');
 
@@ -19,6 +16,7 @@
   Vue.component('gv-heatmap-visualisation', require('components/HeatmapVisualisation.vue'));
   Vue.component('gv-game-level-select', require('components/GameLevelSelect.vue'));
   Vue.component('gv-session-select', require('components/SessionSelect.vue'));
+  Vue.component('gv-timeline-visualisation', require('components/TimelineVisualisation.vue'));
 
   window.app = new Vue(require('components/App.vue'));
 })();
