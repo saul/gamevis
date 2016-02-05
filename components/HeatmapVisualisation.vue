@@ -1,6 +1,6 @@
 <template>
 	<div class="row app-row__main">
-		<div class="col-xs-4 main-panel__filters">
+		<div class="col-xs-4 main-panel__sidebar">
 			<ul class="nav nav-pills" role="tablist">
 				<li role="presentation" v-for="query in queries" @click="switchQueryTab($index)" :class="{'active': query.selected}">
 					<a href="#" role="tab">
