@@ -18,7 +18,6 @@
     "tests"
   ],
   "dependencies": {
-    "vue": "~1.0.15",
     "bootstrap": "~3.3.6",
     "selectize": "~0.12.1"
   }
