@@ -9,7 +9,9 @@
 			this.heatmap = window.createWebGLHeatmap({
 				canvas: this.$el,
 				intensityToAlpha: true,
-				gradientTexture: 'img/gradients/plasma.png'
+				gradientTexture: 'img/gradients/plasma.png',
+				width: 1024,
+				height: 1024
 			});
 
 			this.$watch('gradientPath', () => {
@@ -23,7 +25,7 @@
 	}
 </script>
 
-<style lang="less" type="text/less">
+<style lang="less" rel="stylesheet/less">
 	.visualisation__canvas {
 		position: absolute;
 		width: 100%;
