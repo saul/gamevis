@@ -1,15 +1,20 @@
 'use strict';
 
-var gulp = require('gulp');
-var bower = require('gulp-bower');
-var browserify = require('browserify');
-var less = require('gulp-less');
-var sourcemaps = require('gulp-sourcemaps');
-var babel = require('gulp-babel');
-var babelify = require('babelify');
-var vueify = require('vueify');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
+const gulp = require('gulp');
+const bower = require('gulp-bower');
+const less = require('gulp-less');
+const sourcemaps = require('gulp-sourcemaps');
+const babel = require('gulp-babel');
+const livereload = require('gulp-livereload');
+const gutil = require('gulp-util');
+
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+
+const browserify = require('browserify');
+const babelify = require('babelify');
+const vueify = require('vueify');
+const watchify = require('watchify');
 
 const DIST_DIR = 'dist/';
 const COMPONENTS_DIR = `${DIST_DIR}components/`;
@@ -31,30 +36,41 @@ gulp.task('build:less', ['collect'], () => {
     .pipe(sourcemaps.init())
     .pipe(less())
     .pipe(sourcemaps.write())
-    .pipe(gulp.dest(`${DIST_DIR}css`));
+    .pipe(gulp.dest(`${DIST_DIR}css`))
+    .pipe(livereload());
 });
 
-gulp.task('build:js', ['collect'], () => {
-  return browserify({
-      entries: './js/web/app.js',
-      debug: true,
-      paths: [__dirname]
-    })
-      .transform(vueify)
-      .transform(babelify)
-    .bundle()
+var b = browserify({
+  entries: './js/web/app.js',
+  debug: true,
+  paths: [__dirname],
+  cache: {},
+  packageCache: {},
+  plugin: [watchify]
+})
+  .transform(vueify)
+  .transform(babelify, {'presets': ['es2015']})
+  .transform('browserify-css')
+  .on('update', bundle)
+  .on('log', gutil.log);
+
+function bundle() {
+  return b.bundle()
+    .on('error', function(err) { console.error(err); this.emit('end'); })
     .pipe(source('bundle.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(sourcemaps.write())
-    .pipe(gulp.dest(`${DIST_DIR}js`));
-});
+    .pipe(gulp.dest(`${DIST_DIR}js`))
+    .pipe(livereload());
+}
+
+gulp.task('build:js', ['collect'], bundle);
 
 gulp.task('build', ['build:less', 'build:js']);
 
 gulp.task('watch', ['build'], () => {
-  gulp.watch('js/web/**/*', ['build:js']);
-  gulp.watch('components/**/*', ['build:js']);
+  livereload.listen();
   gulp.watch('less/**/*', ['build:less']);
 });
 
