@@ -52,8 +52,8 @@
 		<fieldset :disabled="selectedEvent == null">
 			<label>{{filters.length | pluralize 'Filter'}} ({{filters.length}})</label>
 
-			<div class="session-form__filter form-group" v-for="filter in filters" track-by="id">
-				<select class="form-control" v-model="filter.target">
+			<div class="form-group-flex form-group" v-for="filter in filters" track-by="id">
+				<select class="form-control width--auto" v-model="filter.target">
 					<option value="_event">Event</option>
 					<option v-for="entity in selectedEvent.entities" :value="entity" :selected="$index == 0">
 						{{entity | capitalize}}
@@ -62,7 +62,7 @@
 
 				<input type="text" class="form-control" v-model="filter.prop">
 
-				<select class="form-control" v-model="filter.comparator">
+				<select class="form-control width--auto" v-model="filter.comparator">
 					<option v-for="comparator in comparators" :value="comparator" :selected="$index == 0">
 						{{{ comparator.text }}}
 					</option>

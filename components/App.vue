@@ -15,11 +15,16 @@
 
 		<ul class="nav nav-tabs" role="tablist">
 			<li><a href="#heatmap" data-toggle="tab">Heatmap</a></li>
+			<li class="active"><a href="#timeline" data-toggle="tab">Timeline</a></li>
 		</ul>
 
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane" id="heatmap">
 				<gv-heatmap-visualisation></gv-heatmap-visualisation>
+			</div>
+
+			<div role="tabpanel" class="tab-pane active" id="timeline">
+				<gv-timeline-visualisation></gv-timeline-visualisation>
 			</div>
 		</div>
 	</div>
@@ -42,19 +47,24 @@
 			},
 			dismissAlert(index) {
 				this.alerts.splice(index, 1);
-			},
-			render() {
-				window.requestAnimationFrame(this.render.bind(this));
-				this.$broadcast('render');
-			},
+			}
 		},
 		events: {
 			error(err) {
 				this.onError(err);
 			}
-		},
-		ready() {
-			this.render();
 		}
 	}
 </script>
+
+<style lang="less" rel="stylesheet/less">
+	@import "../less/variables.less";
+
+	.alerts {
+		position: fixed;
+		bottom: 0;
+		left: 1em;
+		right: 1em;
+		z-index: @zindex-navbar-fixed;
+	}
+</style>

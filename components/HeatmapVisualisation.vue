@@ -105,8 +105,6 @@
 				this.switchQueryTab(i - 1);
 			},
 			closeQuery(index) {
-				console.log('closeQuery', index);
-
 				// find index of the selected tab
 				let selectedIndex = this.queries.findIndex(q => q.selected);
 
@@ -132,13 +130,12 @@
 				}
 			},
 			switchQueryTab(index) {
-				console.log('switchQueryTab', index);
 				this.queries.forEach((q, i) => {
 					q.selected = i == index
 				});
 			},
-			tick() {
-				window.requestAnimationFrame(this.tick.bind(this));
+			render() {
+				window.requestAnimationFrame(this.render.bind(this));
 
 				this.queries.filter(q => q.heatmap)
 						.forEach(q => {
@@ -162,21 +159,13 @@
 				$(this.$els.canvasBackdrop)
 						.css('background-image', `url(overviews/${session.game}/${session.level}.png)`)
 						.css('background-color', 'black');
-			},
-			render() {
-				this.queries.filter(q => q.heatmap)
-						.forEach(q => {
-							q.heatmap.update();
-							q.heatmap.display();
-						});
-
-				// allow children to listen to this event
-				return true;
 			}
 		},
 		ready() {
 			this.addQuery();
 			fs.readdir(GRADIENT_BASE, this.updateGradients.bind(this));
+
+			this.render();
 		}
 	}
 </script>
