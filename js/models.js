@@ -21,6 +21,11 @@ var Event = db.define('event', {
       fields: ['entities'],
       using: 'gin',
       operator: 'jsonb_ops'
+    },
+    {
+      fields: ['locations'],
+      using: 'gin',
+      operator: 'jsonb_ops'
     }
   ]
 });
