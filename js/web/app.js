@@ -36,6 +36,7 @@
   Vue.component('gv-timeline-visualisation', require('components/TimelineVisualisation.vue'));
   Vue.component('gv-timeline-events', require('components/TimelineEvents.vue'));
   Vue.component('gv-timeline-canvas', require('components/TimelineCanvas.vue'));
+  Vue.component('gv-timeline-event-continuous', require('components/TimelineEventContinuous.vue'));
   Vue.component('gv-timeline-event-discontinuous', require('components/TimelineEventDiscontinuous.vue'));
   Vue.component('gv-timeline-event-timeline', require('components/TimelineEventTimeline.vue'));
   Vue.component('gv-timeline', require('components/Timeline.vue'));

@@ -44,10 +44,10 @@
 		data() {
 			return {
 				types: [
-					/*{
-					 name: 'continuous',
-					 component: 'gv-timeline-event-continuous'
-					 },*/
+					{
+						name: 'continuous',
+						component: 'gv-timeline-event-continuous'
+					},
 					{
 						name: 'discontinuous',
 						component: 'gv-timeline-event-discontinuous'
