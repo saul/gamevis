@@ -78,8 +78,10 @@
 				this.selected.splice(index, 1);
 			},
 			sessionChange(session) {
-				session.minTicks = 0;
-				session.maxTicks = 0;
+				this.refreshEvents();
+
+				session.minTick = 0;
+				session.maxTick = 0;
 
 				models.Event.find({
 						attributes: [
@@ -94,8 +96,6 @@
 						session.minTick = result.get('minTick');
 						session.maxTick = result.get('maxTick');
 						session.tickRange = [session.minTick, session.maxTick];
-
-						console.log(`Session ${session.record.title}: ${session.minTick} - ${session.maxTick}`);
 					})
 					.catch(err => this.$dispatch('error', err));
 			},
@@ -154,7 +154,7 @@ ORDER BY name`, {
 
 			this.$watch('gameLevel', this.refresh.bind(this));
 			this.$watch('all', this.refreshEvents.bind(this));
-			this.$watch('selected', this.refreshEvents.bind(this), {deep: true});
+			this.$watch('selected', this.refreshEvents.bind(this));
 		}
 	}
 </script>
