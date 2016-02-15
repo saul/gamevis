@@ -20,8 +20,6 @@
 		},
 		methods: {
 			render() {
-				window.requestAnimationFrame(this.render.bind(this));
-
 				this.context.resetTransform();
 				this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 				this.context.setTransform(PIXEL_RATIO, 0, 0, PIXEL_RATIO, 0, 0);
@@ -35,8 +33,6 @@
 
 			this.canvas.width = this.canvas.offsetWidth * PIXEL_RATIO;
 			this.canvas.height = this.canvas.offsetHeight * PIXEL_RATIO;
-
-			this.render();
 		}
 	}
 </script>

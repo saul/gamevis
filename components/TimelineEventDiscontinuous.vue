@@ -73,7 +73,7 @@
           AND events.session_id IN (:sessionIds)
           AND events.locations ? :location`;
 
-				console.time('query');
+				console.time(`${this.event.name} discontinuous query`);
 
 				return db.query(queryString, {
 						type: db.QueryTypes.SELECT,
@@ -84,7 +84,7 @@
 						}
 					})
 					.then(results => {
-						console.timeEnd('query');
+						console.timeEnd(`${this.event.name} discontinuous query`);
 
 						this.points = results.map(row => {
 							return {
@@ -99,6 +99,8 @@
 		},
 		ready() {
 			this.$watch('all', this.updateAvailable.bind(this));
+			this.$watch('points', this.$dispatch.bind(this, 'redraw'));
+
 			this.updateAvailable();
 		}
 	}

@@ -70,7 +70,9 @@
 
 				ctx.lineWidth = 16;
 
-				this.points.forEach(([session, entityPoints]) => {
+				for (let i = 0; i < this.points.length; ++i) {
+					let [session, entityPoints] = this.points[i];
+
 					let sessionColour = color(session.colour);
 					let [min, max] = session.tickRange;
 					let tickRangeLength = max - min;
@@ -79,12 +81,16 @@
 						ctx.strokeStyle = sessionColour.hex();
 					}
 
-					entityPoints.forEach(([entity, points]) => {
+					for (let j = 0; j < entityPoints.length; ++j) {
+						let [entity, points] = entityPoints[j];
+
 						ctx.beginPath();
 
 						let lastPoint = null;
 
-						for (let event of points) {
+						for (let k = 0; k < points.length; ++k) {
+							let event = points[k];
+
 							if (event.tick < min) {
 								continue;
 							}
@@ -119,8 +125,8 @@
 						}
 
 						e.context.stroke();
-					});
-				})
+					}
+				}
 
 				e.context.restore();
 			},
@@ -133,7 +139,7 @@
           AND events.entities ? :entity
           ORDER BY events.tick`;
 
-				console.time('query');
+				console.time(`${this.event.name} continuous query`);
 
 				return db.query(queryString, {
 						type: db.QueryTypes.SELECT,
@@ -145,7 +151,7 @@
 						}
 					})
 					.then(results => {
-						console.timeEnd('query');
+						console.timeEnd(`${this.event.name} continuous query`);
 
 						let pointsBySession = _.chain(results.map(row => {
 								return {
@@ -168,6 +174,7 @@
 		},
 		ready() {
 			this.$watch('all', this.updateAvailable.bind(this));
+			this.$watch('points', this.$dispatch.bind(this, 'redraw'));
 			this.updateAvailable();
 		}
 	}

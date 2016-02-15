@@ -23,7 +23,7 @@
 		</div>
 
 		<div class="col-xs-8">
-			<gv-timeline :items="timeline.items" :groups="timeline.groups"></gv-timeline>
+			<gv-timeline v-ref:timeline :items="timeline.items" :groups="timeline.groups"></gv-timeline>
 			<gv-timeline-canvas v-ref:canvas></gv-timeline-canvas>
 		</div>
 	</div>
@@ -31,6 +31,16 @@
 
 <script type="text/babel">
 	const db = window.db;
+
+	function tickToMsecs(tick) {
+		// TODO: replace 128 with actual tickrate!!
+		return tick * 1000 / 128;
+	}
+
+	function msecsToTick(msecs) {
+		// TODO: replace 128 with actual tickrate!!
+		return msecs * 128 / 1000;
+	}
 
 	export default {
 		data() {
@@ -106,15 +116,39 @@
 								id: row.id,
 								content: row.name,
 								group: row.session_id,
-								start: row.tick * (1000 / 128) // TODO: this should be multiplying by the tickrate!!
+								editable: false,
+								start: tickToMsecs(row.tick)
 							}
-						});
+						}).concat(
+							this.sessions.map((session, index) => {
+								return {
+									session,
+									id: -index,
+									content: 'Time range',
+									group: session.record.id,
+									start: tickToMsecs(session.tickRange[0]),
+									end: tickToMsecs(session.tickRange[1])
+								}
+							})
+						);
 					})
 					.catch(err => this.$dispatch('error', err));
 			},
 			visualise() {
 				this.visualiseTimeline();
 				this.$broadcast('visualise');
+
+				this.$refs.timeline.$on('moving', (item, cb) => {
+					item.session.tickRange = [item.start, item.end].map(msecsToTick);
+					cb(item);
+
+					this.$emit('redraw');
+				});
+			}
+		},
+		events: {
+			redraw() {
+				this.$refs.canvas.render();
 			}
 		},
 		ready() {
