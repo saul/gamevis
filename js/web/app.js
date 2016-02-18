@@ -22,8 +22,8 @@
   // fontawesome-iconpicker
   require('dist/components/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.css');
 
-  window.db = window.require('remote').require('./js/db');
-  window.models = window.require('remote').require('./js/models');
+  window.db = window.require('./js/db');
+  window.models = window.require('./js/models');
 
   const Vue = window.require('vue');
   Vue.config.debug = true;
