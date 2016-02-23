@@ -1,7 +1,15 @@
 <template>
 	<fieldset :disabled="all.length == 0">
-		<div v-for="event in selected" track-by="id">
+		<div v-for="event in renderOrdered()" track-by="id">
 			<div class="form-group-flex form-group">
+				<button type="button" class="btn btn-default btn-xs" @click="moveUp(event.arrayIndex)" :disabled="$index == 0">
+					<span class="glyphicon glyphicon-chevron-up"></span>
+				</button>
+
+				<button type="button" class="btn btn-default btn-xs" @click="moveDown(event.arrayIndex)" :disabled="$index == selected.length - 1">
+					<span class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+
 				<select class="form-control width--inherit" v-model="event.type">
 					<option v-for="type in types" :value="type" :selected="$index == 0">
 						{{type.name | capitalize}}
@@ -14,7 +22,7 @@
 					</option>
 				</select>
 
-				<button type="button" class="btn btn-danger" @click="removeEvent($index)">
+				<button type="button" class="btn btn-danger" @click="removeEvent(event.arrayIndex)">
 					<span class="glyphicon glyphicon-minus-sign"></span>
 				</button>
 			</div>
@@ -26,7 +34,8 @@
 					 :all="all"
 					 :available.sync="event.available"
 					 :sessions="sessions"
-					 :scene="scene"></div>
+					 :scene="scene"
+					 :render-order="event.arrayIndex + 1"></div>
 
 			<hr>
 		</div>
@@ -68,7 +77,7 @@
 		},
 		methods: {
 			addEvent() {
-				this.selected.push({
+				this.selected.splice(0, 0, {
 					id: eventUid++,
 					event: null,
 					type: null,
@@ -77,6 +86,29 @@
 			},
 			removeEvent(index) {
 				this.selected.splice(index, 1);
+			},
+			moveUp(index) {
+				if (index == this.selected.length - 1) {
+					return;
+				}
+
+				let event = this.selected[index];
+				this.selected.splice(index, 1);
+				this.selected.splice(index + 1, 0, event);
+			},
+			moveDown(index) {
+				if (index == 0) {
+					return;
+				}
+
+				let event = this.selected[index];
+				this.selected.splice(index, 1);
+				this.selected.splice(index - 1, 0, event);
+			},
+			renderOrdered() {
+				// render order is the reverse order of this.selected
+				// we need to add 'arrayIndex' so we know what its index is into this.selected
+				return this.selected.map((e, i) => Object.assign(e, {arrayIndex: i})).reverse();
 			}
 		}
 	}

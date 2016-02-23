@@ -18,7 +18,7 @@
 
 	export default {
 		replace: false,
-		props: ['event', 'all', 'available', 'sessions', 'scene'],
+		props: ['event', 'all', 'available', 'sessions', 'scene', 'renderOrder'],
 		data() {
 			return {
 				selectedLocation: null,
@@ -52,6 +52,8 @@
 				material.map.needsUpdate = true;
 
 				this.mesh = new OverviewMesh(overviewData, material);
+				this.mesh.renderOrder = this.renderOrder;
+
 				this.scene.add(this.mesh);
 			}
 		},
@@ -124,6 +126,12 @@
 			this.$watch('points', () => {
 				this.heatmap.clear();
 				this.heatmap.addPoints(this.points);
+			});
+
+			this.$watch('renderOrder', () => {
+				if (this.mesh) {
+					this.mesh.renderOrder = this.renderOrder;
+				}
 			});
 		},
 		detached() {

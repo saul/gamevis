@@ -23,7 +23,7 @@
 
 	export default {
 		replace: false,
-		props: ['event', 'all', 'available', 'sessions', 'scene'],
+		props: ['event', 'all', 'available', 'sessions', 'scene', 'renderOrder'],
 		data() {
 			return {
 				iconClass: 'fa-crosshairs',
@@ -84,7 +84,7 @@
 						vertexShader: fs.readFileSync('shaders/OverviewPoint.vert', 'utf8'),
 						fragmentShader: fs.readFileSync('shaders/OverviewPoint.frag', 'utf8'),
 						transparent: true,
-						alphaTest: 0.5
+						depthTest: false
 					});
 
 					// keep track of this session material
@@ -111,6 +111,8 @@
 					bufferGeometry.addAttribute('tick', new THREE.BufferAttribute(Float32Array.from(ticks), 1));
 
 					let mesh = new THREE.Mesh(bufferGeometry, material);
+					mesh.renderOrder = this.renderOrder;
+
 					this.scene.add(mesh);
 					this.sceneObjects.push(mesh);
 				}
@@ -172,6 +174,12 @@
 		ready() {
 			this.$watch('all', this.updateAvailable.bind(this));
 			this.updateAvailable();
+
+			this.$watch('renderOrder', () => {
+				this.sceneObjects.forEach(o => {
+					o.renderOrder = this.renderOrder;
+				});
+			});
 		},
 		detached() {
 			this.clear();
