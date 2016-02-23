@@ -81,7 +81,8 @@
 					id: eventUid++,
 					event: null,
 					type: null,
-					available: []
+					available: [],
+					arrayIndex: null
 				});
 			},
 			removeEvent(index) {
