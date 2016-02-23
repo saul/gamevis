@@ -24,6 +24,8 @@
 
   window.db = window.require('./js/db');
   window.models = window.require('./js/models');
+  
+  window.remote = window.require('remote');
 
   const Vue = window.require('vue');
   Vue.config.debug = true;

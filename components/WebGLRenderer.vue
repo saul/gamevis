@@ -31,7 +31,11 @@
 				this.stats.begin();
 				this.$emit('render');
 				this.renderer.render(this.scene, this.camera);
+				this.$emit('postrender');
 				this.stats.end();
+			},
+			toDataURL(type) {
+				return this.canvas.toDataURL(type);
 			}
 		},
 		ready() {

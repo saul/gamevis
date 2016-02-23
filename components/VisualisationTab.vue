@@ -20,16 +20,22 @@
 				<label>Events</label>
 				<gv-event-list :all="allEvents" :selected.sync="events" :sessions="sessions" :scene="scene"></gv-event-list>
 
-				<button type="submit" class="btn btn-success btn-lg btn-block" @click.prevent="visualise" :disabled="!readyToVisualise">
-					<span class="glyphicon glyphicon-eye-open"></span>
-					Visualise
-				</button>
+				<div class="form-group-flex">
+					<button type="submit" class="btn btn-success btn-lg btn-block" @click.prevent="visualise" :disabled="!readyToVisualise">
+						<span class="glyphicon glyphicon-eye-open"></span>
+						Visualise
+					</button>
+
+					<button type="button" class="btn btn-default btn-lg" @click="save">
+						<span class="glyphicon glyphicon-floppy-save"></span>
+					</button>
+				</div>
 			</form>
 		</div>
 
 		<div class="col-xs-8">
 			<gv-timeline v-ref:timeline :items="timeline.items" :groups="timeline.groups"></gv-timeline>
-			<gv-webgl-renderer v-ref:canvas :scene.sync="scene" :camera.sync="camera"></gv-webgl-renderer>
+			<gv-webgl-renderer v-ref:renderer :scene.sync="scene" :camera.sync="camera"></gv-webgl-renderer>
 		</div>
 	</div>
 </template>
@@ -37,6 +43,8 @@
 <script type="text/babel">
 	const db = window.db;
 	const THREE = window.require('three');
+	const fs = window.require('fs');
+	const dialog = remote.require('dialog');
 	const OverviewMesh = require('js/web/overview-mesh.js');
 
 	function tickToMsecs(tick) {
@@ -66,6 +74,7 @@
 				overviewMesh: null,
 				scene: null,
 				camera: null,
+				saveFrame: false,
 				timeline: {
 					items: [],
 					groups: []
@@ -167,11 +176,35 @@
 					item.session.tickRange = [item.start, item.end].map(msecsToTick);
 					cb(item);
 				});
+			},
+			save() {
+				this.saveFrame = true;
 			}
 		},
 		ready() {
 			this.$watch('gameLevel', this.loadOverview.bind(this));
-			this.$refs.canvas.$on('render', this.render.bind(this));
+
+			this.$refs.renderer.$on('render', this.render.bind(this));
+
+			this.$refs.renderer.$on('postrender', () => {
+				if (!this.saveFrame) {
+					return;
+				}
+
+				this.saveFrame = false;
+
+				let data = this.$refs.renderer.toDataURL('image/png');
+
+				dialog.showSaveDialog({
+					title: 'Save visualisation',
+					filters: [
+						{name: 'PNG', extensions: ['png']},
+					]
+				}, filename => {
+					let b64 = data.replace(/^data:image\/png;base64,/, '');
+					fs.writeFileSync(filename, b64, 'base64');
+				});
+			});
 		}
 	}
 </script>
