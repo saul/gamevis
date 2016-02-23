@@ -25,7 +25,8 @@
 					 :event="event.record"
 					 :all="all"
 					 :available.sync="event.available"
-					 :sessions="sessions"></div>
+					 :sessions="sessions"
+					 :scene="scene"></div>
 		</div>
 
 		<div class="form-group clearfix">
@@ -40,7 +41,7 @@
 	var eventUid = 0;
 
 	export default {
-		props: ['all', 'selected', 'sessions'],
+		props: ['all', 'selected', 'sessions', 'scene'],
 		data() {
 			return {
 				types: [

@@ -1,4 +1,10 @@
 <template>
+	<div class="checkbox">
+		<label>
+			<input type="checkbox" v-model="fadeOverTime"> Fade older points
+		</label>
+	</div>
+
 	<div v-if="event" class="form-group">
 		<div class="radio" v-for="location in event.locations">
 			<label>
@@ -15,17 +21,23 @@
 </template>
 
 <script type="text/babel">
+	const _ = window.require('lodash');
+	const THREE = window.require('three');
+	const fs = window.require('fs');
 	const faCache = require('js/web/font-awesome-cache');
 
 	export default {
 		replace: false,
-		props: ['event', 'all', 'available', 'sessions'],
+		props: ['event', 'all', 'available', 'sessions', 'scene'],
 		data() {
 			return {
 				iconClass: 'fa-crosshairs',
 				selectedLocation: null,
 				locations: [],
-				points: []
+				pointsBySession: [],
+				sceneObjects: [],
+				sessionMaterials: [],
+				fadeOverTime: false
 			}
 		},
 		computed: {
@@ -40,31 +52,88 @@
 				} else {
 					this.available = [];
 				}
-			}
+			},
+			clear() {
+				this.sceneObjects.forEach(m => this.scene.remove(m));
+				this.sceneObjects = [];
+				this.sessionMaterials = [];
+			},
+			updateScene() {
+				this.clear();
+
+				let canvas = document.createElement('canvas');
+				canvas.width = canvas.height = 64;
+
+				// render the icon to a 2D canvas
+				let ctx = canvas.getContext('2d');
+				ctx.font = '64px FontAwesome';
+				ctx.textBaseline = 'top';
+				ctx.fillStyle = 'white';
+				ctx.fillText(this.iconText, 0, 0);
+
+				let texture = new THREE.Texture(canvas);
+				texture.needsUpdate = true;
+
+				for (let i = 0; i < this.pointsBySession.length; ++i) {
+					let [session, points] = this.pointsBySession[i];
+
+					let material = new THREE.ShaderMaterial({
+						uniforms: {
+							useTexture: {type: 'i', value: 1},
+							texture1: {type: 't', value: texture},
+							colour: {type: 'c', value: new THREE.Color()},
+							minTick: {type: 'f', value: 0},
+							maxTick: {type: 'f', value: 1},
+							fadeOld: {type: 'i', value: 0},
+						},
+						vertexShader: fs.readFileSync('shaders/OverviewPoint.vert', 'utf8'),
+						fragmentShader: fs.readFileSync('shaders/OverviewPoint.frag', 'utf8'),
+						transparent: true,
+						alphaTest: 0.5
+					});
+
+					// keep track of this session material
+					this.sessionMaterials.push({session, material});
+
+					let geometry = new THREE.Geometry();
+					let ticks = [];
+
+					for (let j = 0; j < points.length; ++j) {
+						let point = points[j];
+						let pos = point.position;
+
+						geometry.merge(
+							new THREE.PlaneGeometry(128, 128),
+							new THREE.Matrix4().makeTranslation(pos.x, pos.y, pos.z)
+						);
+
+						// add the tick to each vertex of the quad
+						ticks.push(point.tick, point.tick, point.tick, point.tick, point.tick, point.tick);
+					}
+
+					let bufferGeometry = new THREE.BufferGeometry();
+					bufferGeometry.fromGeometry(geometry);
+					bufferGeometry.addAttribute('tick', new THREE.BufferAttribute(Float32Array.from(ticks), 1));
+
+					let mesh = new THREE.Mesh(bufferGeometry, material);
+					this.scene.add(mesh);
+					this.sceneObjects.push(mesh);
+				}
+			},
 		},
 		events: {
-			drawEventPoints(e) {
-				e.context.save();
-				e.context.resetTransform();
+			updateFrame() {
+				for (let i = 0; i < this.sessionMaterials.length; ++i) {
+					let material = this.sessionMaterials[i].material;
+					let session = this.sessionMaterials[i].session;
 
-				var scale = e.pixelRatio / e.overviewData.scale;
-				e.context.scale(scale, scale);
+					let [min, max] = session.tickRange;
+					material.uniforms.minTick.value = min;
+					material.uniforms.maxTick.value = max;
 
-				e.context.translate(-e.overviewData.pos_x, e.overviewData.pos_y);
-
-				// 'pixels' here is actually game units
-				e.context.font = `128px FontAwesome`
-
-				this.points.forEach(point => {
-					let [min, max] = point.session.tickRange;
-
-					if (point.tick >= min && point.tick <= max) {
-						e.context.fillStyle = point.session.colour;
-						e.context.fillText(this.iconText, point.position.x, -point.position.y);
-					}
-				});
-
-				e.context.restore();
+					material.uniforms.colour.value.setStyle(session.colour);
+					material.uniforms.fadeOld.value = this.fadeOverTime ? 1 : 0;
+				}
 			},
 			visualise() {
 				let queryString = `SELECT *, (events.locations ->> :location) AS position
@@ -86,22 +155,30 @@
 					.then(results => {
 						console.timeEnd(`${this.event.name} discontinuous query`);
 
-						this.points = results.map(row => {
-							return {
-								tick: row.tick,
-								position: JSON.parse(row.position),
-								session: this.sessions.find(s => s.record.id == row.session_id)
-							}
-						});
+						let pointsBySession = _.chain(results.map(row => {
+								return {
+									tick: row.tick,
+									position: JSON.parse(row.position),
+									sessionIndex: this.sessions.findIndex(s => s.record.id == row.session_id)
+								}
+							}))
+							.groupBy('sessionIndex')
+							.pairs()
+							.value();
+
+						this.pointsBySession = pointsBySession.map(([sessionIndex, points]) => [this.sessions[sessionIndex], points]);
+
+						this.updateScene();
 					})
 					.catch(err => this.$dispatch('error', err));
 			}
 		},
 		ready() {
 			this.$watch('all', this.updateAvailable.bind(this));
-			this.$watch('points', this.$dispatch.bind(this, 'redraw'));
-
 			this.updateAvailable();
+		},
+		detached() {
+			this.clear();
 		}
 	}
 </script>

@@ -1,38 +1,72 @@
 <template>
-	<canvas class="visualisation" v-el:canvas></canvas>
+	<div v-el:container class="webgl-container">
+		<canvas class="visualisation" v-el:canvas></canvas>
+	</div>
 </template>
 
 <script type="text/babel">
-	const PIXEL_RATIO = (function () {
-		var ctx = document.createElement('canvas').getContext('2d'),
-			dpr = window.devicePixelRatio || 1,
-			bsr = ctx.webkitBackingStorePixelRatio || ctx.backingStorePixelRatio || 1;
-
-		return dpr / bsr;
-	})();
+	const THREE = window.require('three');
+	const Stats = window.require('stats.js');
 
 	export default {
+		props: {
+			camera: {
+				twoWay: true
+			},
+			scene: {
+				twoWay: true
+			}
+		},
 		data() {
 			return {
 				canvas: null,
-				context: null
+				renderer: null,
+				stats: null
 			}
 		},
 		methods: {
 			render() {
-				this.context.resetTransform();
-				this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-				this.context.setTransform(PIXEL_RATIO, 0, 0, PIXEL_RATIO, 0, 0);
+				window.requestAnimationFrame(this.render.bind(this));
 
-				this.$emit('render', {canvas: this.canvas, context: this.context, pixelRatio: PIXEL_RATIO});
+				this.stats.begin();
+				this.$emit('render');
+				this.renderer.render(this.scene, this.camera);
+				this.stats.end();
 			}
 		},
 		ready() {
 			this.canvas = this.$els.canvas;
-			this.context = this.canvas.getContext('2d');
 
-			this.canvas.width = this.canvas.offsetWidth * PIXEL_RATIO;
-			this.canvas.height = this.canvas.offsetHeight * PIXEL_RATIO;
+			// Transform coordinate system to use the Z axis as 'up'
+			THREE.Object3D.DefaultUp.set(0, 0, 1);
+
+			this.renderer = new THREE.WebGLRenderer({antialias: true, canvas: this.canvas});
+			this.renderer.setSize(1024, 1024);
+			this.renderer.setPixelRatio(window.devicePixelRatio);
+
+			let camera = new THREE.OrthographicCamera(0, 1, 0, 1, -10000, 10000);
+			this.camera = camera;
+
+			let scene = new THREE.Scene();
+			this.scene = scene;
+
+			this.stats = new Stats();
+			this.stats.setMode(0); // 0: fps, 1: ms, 2: mb
+
+			// align top-left
+			this.stats.domElement.style.position = 'absolute';
+			this.stats.domElement.style.left = '0px';
+			this.stats.domElement.style.top = '0px';
+
+			this.$els.container.appendChild(this.stats.domElement);
+
+			window.requestAnimationFrame(this.render.bind(this));
 		}
 	}
 </script>
+
+<style lang="less" rel="stylesheet/less">
+	.webgl-container {
+		position: relative;
+	}
+</style>

@@ -32,19 +32,23 @@
 	const _ = window.require('lodash');
 	const color = window.require('./dist/components/color/one-color-all-debug');
 	const faCache = require('js/web/font-awesome-cache');
+	const THREE = window.require('three');
+	const fs = window.require('fs');
 
 	const TELEPORT_DISTANCE_SQ = Math.pow(256, 2);
 
 	export default {
 		replace: false,
-		props: ['event', 'all', 'available', 'sessions'],
+		props: ['event', 'all', 'available', 'sessions', 'scene'],
 		data() {
 			return {
 				fadeOverTime: true,
 				selectedLocation: null,
 				groupByEntity: null,
 				locations: [],
-				points: []
+				points: [],
+				sceneObjects: [],
+				sessionMaterials: []
 			}
 		},
 		methods: {
@@ -54,81 +58,83 @@
 				} else {
 					this.available = [];
 				}
-			}
-		},
-		events: {
-			drawEventPoints(e) {
-				let ctx = e.context;
-
-				ctx.save();
-				ctx.resetTransform();
-
-				let scale = e.pixelRatio / e.overviewData.scale;
-				ctx.scale(scale, scale);
-
-				ctx.translate(-e.overviewData.pos_x, e.overviewData.pos_y);
-
-				ctx.lineWidth = 16;
-
+			},
+			clear() {
+				this.sceneObjects.forEach(m => this.scene.remove(m));
+				this.sceneObjects = [];
+				this.sessionMaterials = [];
+			},
+			updateScene() {
 				for (let i = 0; i < this.points.length; ++i) {
 					let [session, entityPoints] = this.points[i];
 
-					let sessionColour = color(session.colour);
-					let [min, max] = session.tickRange;
-					let tickRangeLength = max - min;
+					let material = new THREE.ShaderMaterial({
+						uniforms: {
+							useTexture: {type: 'i', value: 0},
+							colour: {type: 'c', value: new THREE.Color()},
+							minTick: {type: 'f', value: 0},
+							maxTick: {type: 'f', value: 1},
+							fadeOld: {type: 'i', value: 0},
+						},
+						vertexShader: fs.readFileSync('shaders/OverviewPoint.vert', 'utf8'),
+						fragmentShader: fs.readFileSync('shaders/OverviewPoint.frag', 'utf8'),
+						linewidth: 2,
+						depthTest: false,
+						transparent: true
+					});
 
-					if (!this.fadeOverTime) {
-						ctx.strokeStyle = sessionColour.hex();
-					}
+					// keep track of this session material
+					this.sessionMaterials.push({session, material});
 
 					for (let j = 0; j < entityPoints.length; ++j) {
 						let [entity, points] = entityPoints[j];
 
-						ctx.beginPath();
+						let vertices = [];
+						let ticks = [];
 
-						let lastPoint = null;
+						for (let k = 1; k < points.length; ++k) {
+							let lastPoint = points[k - 1];
+							let point = points[k];
 
-						for (let k = 0; k < points.length; ++k) {
-							let event = points[k];
+							let lastPos = lastPoint.position;
+							let pos = point.position;
 
-							if (event.tick < min) {
-								continue;
+							// connect the points if they haven't teleported
+							if (Math.pow(lastPos.x - pos.x, 2) + Math.pow(lastPos.y - pos.y, 2) + Math.pow(lastPos.z - pos.z, 2) < TELEPORT_DISTANCE_SQ) {
+								vertices.push(lastPos.x, lastPos.y, lastPos.z);
+								ticks.push(lastPoint.tick);
+
+								vertices.push(pos.x, pos.y, pos.z);
+								ticks.push(point.tick);
 							}
-
-							if (event.tick > max) {
-								break;
-							}
-
-							let pos = event.position;
-
-							// if there was no previous point, or the point has moved such a significant distance, do not connect with
-							// the previous point
-							if (lastPoint == null || (Math.pow(lastPoint.x - pos.x, 2) + Math.pow(lastPoint.y - pos.y, 2) > TELEPORT_DISTANCE_SQ)) {
-								ctx.moveTo(pos.x, -pos.y);
-							} else {
-								if (this.fadeOverTime) {
-									let alpha = (event.tick - min) / tickRangeLength;
-
-									ctx.strokeStyle = sessionColour.alpha(alpha).cssa();
-									ctx.lineTo(pos.x, -pos.y);
-									ctx.stroke();
-
-									// TODO: is this necessary???
-									ctx.beginPath();
-									ctx.moveTo(pos.x, -pos.y);
-								} else {
-									ctx.lineTo(pos.x, -pos.y);
-								}
-							}
-
-							lastPoint = pos;
 						}
 
-						e.context.stroke();
+						// create buffered geometry
+						let geometry = new THREE.BufferGeometry();
+						geometry.addAttribute('position', new THREE.BufferAttribute(Float32Array.from(vertices), 3));
+						geometry.addAttribute('tick', new THREE.BufferAttribute(Float32Array.from(ticks), 1));
+
+						// create line segment object
+						let line = new THREE.LineSegments(geometry, material);
+						this.scene.add(line);
+						this.sceneObjects.push(line);
 					}
 				}
+			}
+		},
+		events: {
+			updateFrame() {
+				for (let i = 0; i < this.sessionMaterials.length; ++i) {
+					let material = this.sessionMaterials[i].material;
+					let session = this.sessionMaterials[i].session;
 
-				e.context.restore();
+					let [min, max] = session.tickRange;
+					material.uniforms.minTick.value = min;
+					material.uniforms.maxTick.value = max;
+
+					material.uniforms.colour.value.setStyle(session.colour);
+					material.uniforms.fadeOld.value = this.fadeOverTime ? 1 : 0;
+				}
 			},
 			visualise() {
 				let queryString = `SELECT *, (events.entities ->> :entity) AS entity, (events.locations ->> :location) AS position
@@ -168,14 +174,18 @@
 						this.points = pointsBySession.map(([sessionIndex, points]) => {
 							return [this.sessions[sessionIndex], _.pairs(_.groupBy(points, 'entity'))];
 						});
+
+						this.updateScene();
 					})
 					.catch(err => this.$dispatch('error', err));
 			}
 		},
 		ready() {
 			this.$watch('all', this.updateAvailable.bind(this));
-			this.$watch('points', this.$dispatch.bind(this, 'redraw'));
 			this.updateAvailable();
+		},
+		detached() {
+			this.clear();
 		}
 	}
 </script>

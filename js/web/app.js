@@ -27,6 +27,7 @@
 
   const Vue = window.require('vue');
   Vue.config.debug = true;
+  Vue.config.convertAllProperties = true;
 
   Vue.component('gv-canvas', require('components/Canvas.vue'));
   Vue.component('gv-query-form', require('components/QueryForm.vue'));

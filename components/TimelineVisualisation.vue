@@ -13,7 +13,7 @@
 				</div>
 
 				<label>Events</label>
-				<gv-timeline-events :all="allEvents" :selected.sync="events" :sessions="sessions"></gv-timeline-events>
+				<gv-timeline-events :all="allEvents" :selected.sync="events" :sessions="sessions" :scene="scene"></gv-timeline-events>
 
 				<button type="submit" class="btn btn-success btn-lg btn-block" @click.prevent="visualise" :disabled="!readyToVisualise">
 					<span class="glyphicon glyphicon-eye-open"></span>
@@ -24,13 +24,14 @@
 
 		<div class="col-xs-8">
 			<gv-timeline v-ref:timeline :items="timeline.items" :groups="timeline.groups"></gv-timeline>
-			<gv-timeline-canvas v-ref:canvas></gv-timeline-canvas>
+			<gv-timeline-canvas v-ref:canvas :scene.sync="scene" :camera.sync="camera"></gv-timeline-canvas>
 		</div>
 	</div>
 </template>
 
 <script type="text/babel">
 	const db = window.db;
+	const THREE = window.require('three');
 
 	function tickToMsecs(tick) {
 		// TODO: replace 128 with actual tickrate!!
@@ -49,8 +50,9 @@
 				sessions: [],
 				allEvents: [],
 				events: [],
-				overviewImage: null,
-				overviewData: null,
+				overviewMesh: null,
+				scene: null,
+				camera: null,
 				timeline: {
 					items: [],
 					groups: []
@@ -64,14 +66,9 @@
 		},
 		methods: {
 			render(e) {
-				if (this.overviewImage && this.overviewImage.complete) {
-					e.context.fillStyle = 'black';
-					e.context.fillRect(0, 0, e.canvas.offsetWidth, e.canvas.offsetHeight);
-
-					e.context.drawImage(this.overviewImage, 0, 0);
-
+				if (this.overviewData) {
 					this.$broadcast(
-						'drawEventPoints',
+						'updateFrame',
 						Object.assign({}, e, {
 							overviewData: this.overviewData
 						})
@@ -81,11 +78,53 @@
 			loadOverview() {
 				this.overviewData = window.require(`./overviews/${this.gameLevel.game}/${this.gameLevel.level}.json`);
 
-				this.overviewImage = new Image();
-				this.overviewImage.src = `overviews/${this.gameLevel.game}/${this.gameLevel.level}.png`;
+				// remove the existing mesh
+				if (this.overviewMesh) {
+					this.scene.remove(this.overviewMesh);
+				}
+
+				let loader = new THREE.TextureLoader();
+				let overviewTexture = loader.load(`overviews/${this.gameLevel.game}/${this.gameLevel.level}.png`);
+
+				let material = new THREE.MeshBasicMaterial({map: overviewTexture, depthWrite: false});
+
+				let geometry = new THREE.Geometry();
+				geometry.vertices.push(new THREE.Vector3(0, 0, 0));
+				geometry.vertices.push(new THREE.Vector3(1024, 0, 0));
+				geometry.vertices.push(new THREE.Vector3(0, -1024, 0));
+				geometry.vertices.push(new THREE.Vector3(1024, -1024, 0));
+				geometry.faces.push(new THREE.Face3(0, 2, 1));
+				geometry.faces.push(new THREE.Face3(2, 3, 1));
+				geometry.faceVertexUvs[0].push(
+					[new THREE.Vector2(0, 1), new THREE.Vector2(0, 0), new THREE.Vector2(1, 1)],
+					[new THREE.Vector2(0, 0), new THREE.Vector2(1, 0), new THREE.Vector2(1, 1)]
+				);
+
+				let mesh = new THREE.Mesh(geometry, material);
+
+				this.overviewMesh = mesh;
+				this.overviewMesh.scale.set(this.overviewData.scale, this.overviewData.scale, 1);
+				this.overviewMesh.position.set(this.overviewData.pos_x, this.overviewData.pos_y, 0);
+				this.scene.add(this.overviewMesh);
+
+				this.camera.left = this.overviewData.pos_x;
+				this.camera.top = this.overviewData.pos_y;
+				this.camera.right = this.overviewData.pos_x + (1024 * this.overviewData.scale);
+				this.camera.bottom = this.overviewData.pos_y - (1024 * this.overviewData.scale);
+				this.camera.updateProjectionMatrix();
 			},
 			visualiseTimeline() {
-				this.timeline.items = [];
+				this.timeline.items = this.sessions.map((session, index) => {
+					return {
+						session,
+						id: -index,
+						content: 'Time range',
+						group: session.record.id,
+						start: tickToMsecs(session.tickRange[0]),
+						end: tickToMsecs(session.tickRange[1])
+					}
+				});
+
 				this.timeline.groups = this.sessions.map(session => {
 					return {
 						id: session.record.id,
@@ -111,7 +150,7 @@
 						}
 					})
 					.then(results => {
-						this.timeline.items = results.map(row => {
+						this.timeline.items = this.timeline.items.concat(results.map(row => {
 							return {
 								id: row.id,
 								content: row.name,
@@ -119,18 +158,7 @@
 								editable: false,
 								start: tickToMsecs(row.tick)
 							}
-						}).concat(
-							this.sessions.map((session, index) => {
-								return {
-									session,
-									id: -index,
-									content: 'Time range',
-									group: session.record.id,
-									start: tickToMsecs(session.tickRange[0]),
-									end: tickToMsecs(session.tickRange[1])
-								}
-							})
-						);
+						}));
 					})
 					.catch(err => this.$dispatch('error', err));
 			},
@@ -141,14 +169,7 @@
 				this.$refs.timeline.$on('moving', (item, cb) => {
 					item.session.tickRange = [item.start, item.end].map(msecsToTick);
 					cb(item);
-
-					this.$emit('redraw');
 				});
-			}
-		},
-		events: {
-			redraw() {
-				this.$refs.canvas.render();
 			}
 		},
 		ready() {
