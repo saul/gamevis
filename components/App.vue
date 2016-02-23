@@ -22,7 +22,7 @@
 
 		<div class="tab-content">
 			<div class="tab-content">
-				<gv-timeline-visualisation v-ref:vis v-for="tab in tabs" track-by="id" role="tabpanel" class="tab-pane" :class="{'active': tab.selected}" :title.sync="tab.title"></gv-timeline-visualisation>
+				<gv-visualisation-tab v-ref:vis v-for="tab in tabs" track-by="id" role="tabpanel" class="tab-pane" :class="{'active': tab.selected}" :title.sync="tab.title"></gv-visualisation-tab>
 			</div>
 		</div>
 	</div>

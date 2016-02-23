@@ -18,7 +18,7 @@
 				</div>
 
 				<label>Events</label>
-				<gv-timeline-events :all="allEvents" :selected.sync="events" :sessions="sessions" :scene="scene"></gv-timeline-events>
+				<gv-event-list :all="allEvents" :selected.sync="events" :sessions="sessions" :scene="scene"></gv-event-list>
 
 				<button type="submit" class="btn btn-success btn-lg btn-block" @click.prevent="visualise" :disabled="!readyToVisualise">
 					<span class="glyphicon glyphicon-eye-open"></span>
@@ -29,7 +29,7 @@
 
 		<div class="col-xs-8">
 			<gv-timeline v-ref:timeline :items="timeline.items" :groups="timeline.groups"></gv-timeline>
-			<gv-timeline-canvas v-ref:canvas :scene.sync="scene" :camera.sync="camera"></gv-timeline-canvas>
+			<gv-webgl-renderer v-ref:canvas :scene.sync="scene" :camera.sync="camera"></gv-webgl-renderer>
 		</div>
 	</div>
 </template>

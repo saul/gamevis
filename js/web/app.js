@@ -34,13 +34,13 @@
   Vue.component('gv-event-filter-list', require('components/EventFilterList.vue'));
   Vue.component('gv-game-level-select', require('components/GameLevelSelect.vue'));
   Vue.component('gv-session-select', require('components/SessionSelect.vue'));
-  Vue.component('gv-timeline-visualisation', require('components/TimelineVisualisation.vue'));
-  Vue.component('gv-timeline-events', require('components/TimelineEvents.vue'));
-  Vue.component('gv-timeline-canvas', require('components/TimelineCanvas.vue'));
-  Vue.component('gv-timeline-event-continuous', require('components/TimelineEventContinuous.vue'));
-  Vue.component('gv-timeline-event-discontinuous', require('components/TimelineEventDiscontinuous.vue'));
-  Vue.component('gv-timeline-event-timeline', require('components/TimelineEventTimeline.vue'));
-  Vue.component('gv-timeline-event-heatmap', require('components/TimelineEventHeatmap.vue'));
+  Vue.component('gv-visualisation-tab', require('components/VisualisationTab.vue'));
+  Vue.component('gv-event-list', require('components/EventList.vue'));
+  Vue.component('gv-webgl-renderer', require('components/WebGLRenderer.vue'));
+  Vue.component('gv-vis-continuous', require('components/VisContinuous.vue'));
+  Vue.component('gv-vis-discontinuous', require('components/VisDiscontinuous.vue'));
+  Vue.component('gv-vis-timeline', require('components/VisTimeline.vue'));
+  Vue.component('gv-vis-heatmap', require('components/VisHeatmap.vue'));
   Vue.component('gv-heatmap-gradient-select', require('components/HeatmapGradientSelect.vue'));
   Vue.component('gv-timeline', require('components/Timeline.vue'));
 

@@ -49,19 +49,19 @@
 				types: [
 					{
 						name: 'heatmap',
-						component: 'gv-timeline-event-heatmap'
+						component: 'gv-vis-heatmap'
 					},
 					{
 						name: 'continuous',
-						component: 'gv-timeline-event-continuous'
+						component: 'gv-vis-continuous'
 					},
 					{
 						name: 'discontinuous',
-						component: 'gv-timeline-event-discontinuous'
+						component: 'gv-vis-discontinuous'
 					},
 					{
 						name: 'timeline',
-						component: 'gv-timeline-event-timeline'
+						component: 'gv-vis-timeline'
 					}
 				]
 			}
