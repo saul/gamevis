@@ -5,19 +5,14 @@
 		</label>
 	</div>
 
-	<div v-if="event" class="form-group">
-		<div class="radio" v-for="location in event.locations">
-			<label>
-				<input type="radio" v-model="selectedLocation" :value="location" :checked="$index == 0">
-				{{location | capitalize}}
-			</label>
-		</div>
-	</div>
+	<gv-radio-list v-if="event" label="Plot" :all="event.locations" :selected.sync="selectedLocation"></gv-radio-list>
 
 	<div class="form-group form-group-flex">
 		<label>Icon</label>
 		<iconpicker :value.sync="iconClass" class="input-sm"></iconpicker>
 	</div>
+
+	<gv-event-filter-list v-ref:filters v-if="event" :event="event"></gv-event-filter-list>
 </template>
 
 <script type="text/babel">
@@ -140,7 +135,8 @@
           FROM events
           WHERE events.name = :event
           AND events.session_id IN (:sessionIds)
-          AND events.locations ? :location`;
+          AND events.locations ? :location
+          ${this.$refs.filters.sql()}`;
 
 				console.time(`${this.event.name} discontinuous query`);
 

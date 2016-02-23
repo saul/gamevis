@@ -1,0 +1,47 @@
+<template>
+	<div class="form-group">
+		<label>Colour gradient</label>
+
+		<select class="form-control" v-model="selected" :disabled="all.length == 0">
+			<option v-for="gradient in all" value="{{ gradient.path }}">
+				{{ gradient.baseName | capitalize }}
+			</option>
+		</select>
+	</div>
+</template>
+
+<script type="text/babel">
+	const assert = window.require('assert');
+	const fs = window.require('fs');
+	const path = window.require('path');
+
+	// path to the gradient textures directory
+	const GRADIENT_BASE = 'img/gradients';
+
+	export default {
+		props: {
+			selected: {
+				required: true,
+				twoWay: true,
+			}
+		},
+		data() {
+			return {
+				all: []
+			}
+		},
+		ready() {
+			fs.readdir(GRADIENT_BASE, (err, files) => {
+				assert.ifError(err);
+
+				this.all = files.filter(name => !name.startsWith('.'))
+					.map(file => {
+						return {
+							path: path.join(GRADIENT_BASE, file),
+							baseName: path.parse(file).name
+						}
+					});
+			});
+		}
+	}
+</script>

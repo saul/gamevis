@@ -5,27 +5,11 @@
 		</label>
 	</div>
 
-	<div v-if="event" class="form-group">
-		<label>Plot</label>
+	<gv-radio-list v-if="event" label="Plot" :all="event.locations" :selected.sync="selectedLocation"></gv-radio-list>
 
-		<div class="radio" v-for="location in event.locations">
-			<label>
-				<input type="radio" v-model="selectedLocation" :value="location" :checked="$index == 0">
-				{{location | capitalize}}
-			</label>
-		</div>
-	</div>
+	<gv-radio-list v-if="event" label="Group by" :all="event.entities" :selected.sync="groupByEntity"></gv-radio-list>
 
-	<div v-if="event" class="form-group">
-		<label>Group by</label>
-
-		<div class="radio" v-for="entity in event.entities">
-			<label>
-				<input type="radio" v-model="groupByEntity" :value="entity" :checked="$index == 0">
-				{{entity | capitalize}}
-			</label>
-		</div>
-	</div>
+	<gv-event-filter-list v-ref:filters v-if="event" :event="event"></gv-event-filter-list>
 </template>
 
 <script type="text/babel">
@@ -65,6 +49,8 @@
 				this.sessionMaterials = [];
 			},
 			updateScene() {
+				this.clear();
+
 				for (let i = 0; i < this.points.length; ++i) {
 					let [session, entityPoints] = this.points[i];
 
@@ -143,6 +129,7 @@
           AND events.session_id IN (:sessionIds)
           AND events.locations ? :location
           AND events.entities ? :entity
+          ${this.$refs.filters.sql()}
           ORDER BY events.tick`;
 
 				console.time(`${this.event.name} continuous query`);

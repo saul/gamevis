@@ -14,15 +14,11 @@
 		</div>
 
 		<ul class="nav nav-tabs" role="tablist">
-			<li><a href="#heatmap" data-toggle="tab">Heatmap</a></li>
-			<li class="active"><a href="#timeline" data-toggle="tab">Timeline</a></li>
+			<li class="active"><a href="#timeline" data-toggle="tab">Visualisation</a></li>
 		</ul>
 
 		<div class="tab-content">
-			<div role="tabpanel" class="tab-pane" id="heatmap">
-				<gv-heatmap-visualisation></gv-heatmap-visualisation>
-			</div>
-
+			<!-- TODO: add tabbing -->
 			<div role="tabpanel" class="tab-pane active" id="timeline">
 				<gv-timeline-visualisation></gv-timeline-visualisation>
 			</div>

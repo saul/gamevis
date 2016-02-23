@@ -32,6 +32,7 @@
 <script type="text/babel">
 	const db = window.db;
 	const THREE = window.require('three');
+	const OverviewMesh = require('js/web/overview-mesh.js');
 
 	function tickToMsecs(tick) {
 		// TODO: replace 128 with actual tickrate!!
@@ -84,27 +85,11 @@
 				}
 
 				let loader = new THREE.TextureLoader();
-				let overviewTexture = loader.load(`overviews/${this.gameLevel.game}/${this.gameLevel.level}.png`);
 
+				let overviewTexture = loader.load(`overviews/${this.gameLevel.game}/${this.gameLevel.level}.png`);
 				let material = new THREE.MeshBasicMaterial({map: overviewTexture, depthWrite: false});
 
-				let geometry = new THREE.Geometry();
-				geometry.vertices.push(new THREE.Vector3(0, 0, 0));
-				geometry.vertices.push(new THREE.Vector3(1024, 0, 0));
-				geometry.vertices.push(new THREE.Vector3(0, -1024, 0));
-				geometry.vertices.push(new THREE.Vector3(1024, -1024, 0));
-				geometry.faces.push(new THREE.Face3(0, 2, 1));
-				geometry.faces.push(new THREE.Face3(2, 3, 1));
-				geometry.faceVertexUvs[0].push(
-					[new THREE.Vector2(0, 1), new THREE.Vector2(0, 0), new THREE.Vector2(1, 1)],
-					[new THREE.Vector2(0, 0), new THREE.Vector2(1, 0), new THREE.Vector2(1, 1)]
-				);
-
-				let mesh = new THREE.Mesh(geometry, material);
-
-				this.overviewMesh = mesh;
-				this.overviewMesh.scale.set(this.overviewData.scale, this.overviewData.scale, 1);
-				this.overviewMesh.position.set(this.overviewData.pos_x, this.overviewData.pos_y, 0);
+				this.overviewMesh = new OverviewMesh(this.overviewData, material);
 				this.scene.add(this.overviewMesh);
 
 				this.camera.left = this.overviewData.pos_x;
@@ -164,7 +149,7 @@
 			},
 			visualise() {
 				this.visualiseTimeline();
-				this.$broadcast('visualise');
+				this.$broadcast('visualise', {overviewData: this.overviewData});
 
 				this.$refs.timeline.$on('moving', (item, cb) => {
 					item.session.tickRange = [item.start, item.end].map(msecsToTick);

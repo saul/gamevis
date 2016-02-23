@@ -44,7 +44,7 @@
 			this.renderer.setSize(1024, 1024);
 			this.renderer.setPixelRatio(window.devicePixelRatio);
 
-			let camera = new THREE.OrthographicCamera(0, 1, 0, 1, -10000, 10000);
+			let camera = new THREE.OrthographicCamera(0, 1, 0, 1, -20000, 20000);
 			this.camera = camera;
 
 			let scene = new THREE.Scene();

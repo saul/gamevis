@@ -27,6 +27,8 @@
 					 :available.sync="event.available"
 					 :sessions="sessions"
 					 :scene="scene"></div>
+
+			<hr>
 		</div>
 
 		<div class="form-group clearfix">
@@ -45,6 +47,10 @@
 		data() {
 			return {
 				types: [
+					{
+						name: 'heatmap',
+						component: 'gv-timeline-event-heatmap'
+					},
 					{
 						name: 'continuous',
 						component: 'gv-timeline-event-continuous'
