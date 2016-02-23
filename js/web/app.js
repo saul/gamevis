@@ -29,6 +29,7 @@
   Vue.config.debug = true;
   Vue.config.convertAllProperties = true;
 
+  Vue.component('gv-alerts', require('components/Alerts.vue'));
   Vue.component('gv-radio-list', require('components/RadioList.vue'));
   Vue.component('gv-event-filter-list', require('components/EventFilterList.vue'));
   Vue.component('gv-game-level-select', require('components/GameLevelSelect.vue'));

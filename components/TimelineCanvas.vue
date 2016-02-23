@@ -1,6 +1,6 @@
 <template>
 	<div v-el:container class="webgl-container">
-		<canvas class="visualisation" v-el:canvas></canvas>
+		<canvas v-el:canvas></canvas>
 	</div>
 </template>
 

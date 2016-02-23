@@ -1,26 +1,28 @@
 <template>
 	<div class="container-fluid">
-		<div class="alerts" v-if="alerts.length">
-			<div v-for="alert in alerts" class="alert alert-dismissible" :class="['alert-' + alert.className]" role="alert">
-				<button type="button" class="close" @click="dismissAlert($index)" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-
-				<h4 class="alert-heading">{{ alert.headline }}</h4>
-				<p v-if="alert.text">{{ alert.text | capitalize }}</p>
-
-				<pre v-if="alert.stack">{{ alert.stack }}</pre>
-			</div>
-		</div>
+		<gv-alerts v-ref:alerts></gv-alerts>
 
 		<ul class="nav nav-tabs" role="tablist">
-			<li class="active"><a href="#timeline" data-toggle="tab">Visualisation</a></li>
+			<li v-for="tab in tabs" @click="switchTab($index)" :class="{'active': tab.selected}">
+				<a href="#" role="tab">
+					<button type="button" class="close" @click="closeTab($index)" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+
+					{{tab.title}}
+				</a>
+			</li>
+
+			<li>
+				<a href="#" @click="addTab">
+					<span class="glyphicon glyphicon-plus"></span>
+				</a>
+			</li>
 		</ul>
 
 		<div class="tab-content">
-			<!-- TODO: add tabbing -->
-			<div role="tabpanel" class="tab-pane active" id="timeline">
-				<gv-timeline-visualisation></gv-timeline-visualisation>
+			<div class="tab-content">
+				<gv-timeline-visualisation v-ref:vis v-for="tab in tabs" track-by="id" role="tabpanel" class="tab-pane" :class="{'active': tab.selected}" :title.sync="tab.title"></gv-timeline-visualisation>
 			</div>
 		</div>
 	</div>
@@ -31,36 +33,57 @@
 		el: 'body',
 		replace: false,
 		data: {
-			alerts: [],
+			atomicTabs: 0,
+			tabs: [],
 		},
 		methods: {
-			onError(error) {
-				this.alerts.push({
-					className: 'danger',
-					headline: error.name,
-					text: error.message
-				})
+			addTab() {
+				let i = this.tabs.push({
+					id: this.atomicTabs++,
+					selected: false,
+					title: 'Untitled'
+				});
+
+				this.switchTab(i - 1);
 			},
-			dismissAlert(index) {
-				this.alerts.splice(index, 1);
-			}
+			closeTab(index) {
+				// find index of the selected tab
+				let selectedIndex = this.tabs.findIndex(q => q.selected);
+
+				this.tabs.splice(index, 1);
+
+				let closedSelected = index == selectedIndex;
+
+				// no choice if there's no tabs remaining or only 1 left
+				if (this.tabs.length === 0) {
+					return this.addTab();
+				}
+				if (this.tabs.length === 1) {
+					return this.switchTab(0);
+				}
+
+				// if the tab was selected upon closing, switch to the tab to the left
+				if (closedSelected) {
+					return this.switchTab(Math.min(index, this.tabs.length - 1));
+				}
+
+				if (index > selectedIndex) {
+					return this.switchTab(index - 1);
+				}
+			},
+			switchTab(index) {
+				this.tabs.forEach((q, i) => {
+					q.selected = i == index;
+				});
+			},
 		},
 		events: {
 			error(err) {
-				this.onError(err);
+				this.$refs.alerts.$emit('error', err);
 			}
+		},
+		ready() {
+			this.addTab();
 		}
 	}
 </script>
-
-<style lang="less" rel="stylesheet/less">
-	@import "../less/variables.less";
-
-	.alerts {
-		position: fixed;
-		bottom: 0;
-		left: 1em;
-		right: 1em;
-		z-index: @zindex-navbar-fixed;
-	}
-</style>

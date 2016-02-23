@@ -3,6 +3,11 @@
 		<div class="col-xs-4 main-panel__sidebar">
 			<form>
 				<div class="form-group">
+					<label>Title</label>
+					<input type="text" class="form-control" v-model="title">
+				</div>
+
+				<div class="form-group">
 					<label>Game/Level</label>
 					<gv-game-level-select :selected.sync="gameLevel"></gv-game-level-select>
 				</div>
@@ -45,6 +50,13 @@
 	}
 
 	export default {
+		replace: false,
+		props: {
+			title: {
+				required: true,
+				twoWay: true
+			}
+		},
 		data() {
 			return {
 				gameLevel: null,
@@ -163,3 +175,20 @@
 		}
 	}
 </script>
+
+<style lang="less" rel="stylesheet/less">
+	@import "../less/variables.less";
+
+	.app-row__main {
+		display: flex;
+		min-height: 100vh;
+
+		> div {
+			padding: 1em;
+		}
+	}
+
+	.main-panel__sidebar {
+		background-color: @gray-lighter;
+	}
+</style>
