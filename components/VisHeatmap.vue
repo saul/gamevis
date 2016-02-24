@@ -27,6 +27,7 @@
 			return {
 				selectedLocation: null,
 				points: [],
+				filteredPoints: [],
 				mesh: null,
 				heatmap: null,
 				intensity: 0.5,
@@ -53,13 +54,28 @@
 					map: new THREE.Texture(this.heatmap.canvas),
 					transparent: true
 				});
-				material.map.needsUpdate = true;
 
 				this.mesh = new OverviewMesh(overviewData, material);
 				this.mesh.renderOrder = this.renderOrder;
 				this.mesh.visible = this.visible;
 
+				this.markTextureNeedsUpdate();
+
 				this.scene.add(this.mesh);
+			},
+			updateFilteredPoints() {
+				this.filteredPoints = this.points.filter(point => {
+					let [min, max] = point.session.tickRange;
+					return point.tick >= min && point.tick <= max;
+				});
+			},
+			markTextureNeedsUpdate() {
+				if (!this.mesh) {
+					console.warn('cannot mark heatmap texture as needsUpdate: no mesh available');
+					return;
+				}
+
+				this.mesh.material.map.needsUpdate = true;
 			}
 		},
 		events: {
@@ -88,8 +104,6 @@
 					.then(results => {
 						console.timeEnd(`${this.event.name} heatmap query`);
 
-						console.time('heatmap first render');
-
 						this.points = results.map(row => {
 							let position = JSON.parse(row.position);
 
@@ -97,11 +111,11 @@
 								x: (position.x - e.overviewData.pos_x) / e.overviewData.scale,
 								y: (e.overviewData.pos_y - position.y) / e.overviewData.scale,
 								scale: e.overviewData.scale,
-								intensity: this.intensity
+								intensity: this.intensity,
+								tick: row.tick,
+								session: this.sessions.find(s => s.record.id == row.session_id)
 							};
 						});
-
-						console.timeEnd('heatmap first render');
 
 						this.updateScene(e.overviewData);
 					})
@@ -120,6 +134,14 @@
 				height: 1024
 			});
 
+			// watch `sessions` for change (we're interested in tickRange in particular)
+			// debounce re-filtering as it triggers repopulating vertex buffers (slow)
+			this.$watch(
+				'sessions',
+				_.debounce(this.updateFilteredPoints.bind(this), 250, {maxWait: 300}),
+				{deep: true}
+			);
+
 			this.$watch('gradientPath', () => {
 				let image = new Image();
 				image.onload = () => {
@@ -128,9 +150,14 @@
 				image.src = this.gradientPath;
 			});
 
-			this.$watch('points', () => {
+			this.$watch('points', this.updateFilteredPoints.bind(this));
+
+			this.$watch('filteredPoints', () => {
 				this.heatmap.clear();
-				this.heatmap.addPoints(this.points);
+				this.heatmap.addPoints(this.filteredPoints);
+
+				// the heatmap texture has changed so mark it as dirty
+				this.markTextureNeedsUpdate();
 			});
 
 			this.$watch('renderOrder', () => {
