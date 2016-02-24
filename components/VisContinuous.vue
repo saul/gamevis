@@ -23,7 +23,7 @@
 
 	export default {
 		replace: false,
-		props: ['event', 'all', 'available', 'sessions', 'scene', 'renderOrder'],
+		props: ['event', 'all', 'available', 'sessions', 'scene', 'renderOrder', 'visible'],
 		data() {
 			return {
 				fadeOverTime: true,
@@ -103,6 +103,7 @@
 						// create line segment object
 						let line = new THREE.LineSegments(geometry, material);
 						line.renderOrder = this.renderOrder;
+						line.visible = this.visible;
 
 						this.scene.add(line);
 						this.sceneObjects.push(line);
@@ -176,6 +177,12 @@
 			this.$watch('renderOrder', () => {
 				this.sceneObjects.forEach(o => {
 					o.renderOrder = this.renderOrder;
+				});
+			});
+
+			this.$watch('visible', () => {
+				this.sceneObjects.forEach(o => {
+					o.visible = this.visible;
 				});
 			});
 		},

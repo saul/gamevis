@@ -10,6 +10,10 @@
 					<span class="glyphicon glyphicon-chevron-down"></span>
 				</button>
 
+				<button type="button" class="btn btn-default btn-xs" @click="toggle(event.arrayIndex)">
+					<span class="glyphicon" :class="{'glyphicon-eye-open': event.visible, 'glyphicon-eye-close': !event.visible}"></span>
+				</button>
+
 				<select class="form-control width--inherit" v-model="event.type">
 					<option v-for="type in types" :value="type" :selected="$index == 0">
 						{{type.name | capitalize}}
@@ -35,8 +39,8 @@
 					 :available.sync="event.available"
 					 :sessions="sessions"
 					 :scene="scene"
-					 :render-order="event.arrayIndex + 1"></div>
-
+					 :render-order="event.arrayIndex + 1"
+					 :visible="event.visible"></div>
 			<hr>
 		</div>
 
@@ -77,16 +81,20 @@
 		},
 		methods: {
 			addEvent() {
-				this.selected.splice(0, 0, {
+				this.selected.unshift({
 					id: eventUid++,
 					event: null,
 					type: null,
 					available: [],
-					arrayIndex: null
+					arrayIndex: null,
+					visible: true
 				});
 			},
 			removeEvent(index) {
 				this.selected.splice(index, 1);
+			},
+			toggle(index) {
+				this.selected[index].visible = !this.selected[index].visible;
 			},
 			moveUp(index) {
 				if (index == this.selected.length - 1) {

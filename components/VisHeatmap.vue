@@ -18,7 +18,7 @@
 
 	export default {
 		replace: false,
-		props: ['event', 'all', 'available', 'sessions', 'scene', 'renderOrder'],
+		props: ['event', 'all', 'available', 'sessions', 'scene', 'renderOrder', 'visible'],
 		data() {
 			return {
 				selectedLocation: null,
@@ -53,6 +53,7 @@
 
 				this.mesh = new OverviewMesh(overviewData, material);
 				this.mesh.renderOrder = this.renderOrder;
+				this.mesh.visible = this.visible;
 
 				this.scene.add(this.mesh);
 			}
@@ -131,6 +132,12 @@
 			this.$watch('renderOrder', () => {
 				if (this.mesh) {
 					this.mesh.renderOrder = this.renderOrder;
+				}
+			});
+
+			this.$watch('visible', () => {
+				if (this.mesh) {
+					this.mesh.visible = this.visible;
 				}
 			});
 		},

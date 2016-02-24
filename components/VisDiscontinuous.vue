@@ -23,7 +23,7 @@
 
 	export default {
 		replace: false,
-		props: ['event', 'all', 'available', 'sessions', 'scene', 'renderOrder'],
+		props: ['event', 'all', 'available', 'sessions', 'scene', 'renderOrder', 'visible'],
 		data() {
 			return {
 				iconClass: 'fa-crosshairs',
@@ -112,6 +112,7 @@
 
 					let mesh = new THREE.Mesh(bufferGeometry, material);
 					mesh.renderOrder = this.renderOrder;
+					mesh.visible = this.visible;
 
 					this.scene.add(mesh);
 					this.sceneObjects.push(mesh);
@@ -178,6 +179,12 @@
 			this.$watch('renderOrder', () => {
 				this.sceneObjects.forEach(o => {
 					o.renderOrder = this.renderOrder;
+				});
+			});
+
+			this.$watch('visible', () => {
+				this.sceneObjects.forEach(o => {
+					o.visible = this.visible;
 				});
 			});
 		},
