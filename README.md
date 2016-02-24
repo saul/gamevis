@@ -14,8 +14,12 @@ Screenshot demonstrating two layered heatmap visualisations:
 
 ## Visualisations
 
-* **Heatmaps**, many may be layered (as demonstrated in screenshot).
-* More to come soon!
+Multiple visualisations can be show on a single visualisation (as shown in the screenshot):
+
+* Heatmaps
+* Timeline events (e.g., round start)
+* Discontinuous points (e.g., death location)
+* Continuous points (e.g., player movement)
 
 ## Importers
 
