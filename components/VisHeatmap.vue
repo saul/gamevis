@@ -1,11 +1,15 @@
 <template>
 	<gv-heatmap-gradient-select :selected.sync="gradientPath"></gv-heatmap-gradient-select>
 
-	<gv-radio-list v-if="event" label="Plot" :all="event.locations" :selected.sync="selectedLocation"></gv-radio-list>
-
 	<div class="form-group">
-		<label for="intensity">Point intensity</label>
-		<input type="text" class="form-control" id="intensity" v-model="intensity">
+		<label for="intensity" class="col-sm-4">Point intensity</label>
+		<div class="col-sm-8">
+			<input type="text" class="form-control" id="intensity" v-model="intensity">
+		</div>
+	</div>
+
+	<div v-if="event" v-show="event.locations.length > 1">
+		<gv-radio-list label="Plot" :all="event.locations" :selected.sync="selectedLocation"></gv-radio-list>
 	</div>
 
 	<gv-event-filter-list v-ref:filters v-if="event" :event="event"></gv-event-filter-list>

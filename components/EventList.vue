@@ -1,7 +1,7 @@
 <template>
 	<fieldset :disabled="all.length == 0">
-		<div v-for="event in renderOrdered()" track-by="id">
-			<div class="form-group-flex form-group">
+		<div class="col-sm-12 event-container" v-for="event in renderOrdered()" track-by="id">
+			<div class="form-group form-group-flex">
 				<button type="button" class="btn btn-default btn-xs" @click="moveUp(event.arrayIndex)" :disabled="$index == 0">
 					<span class="glyphicon glyphicon-chevron-up"></span>
 				</button>
@@ -31,8 +31,7 @@
 				</button>
 			</div>
 
-			<div class="gutter--left gutter--bottom"
-					 v-if="event.type"
+			<div v-if="event.type"
 					 :is="event.type.component"
 					 :event="event.record"
 					 :all="all"
@@ -41,13 +40,15 @@
 					 :scene="scene"
 					 :render-order="event.arrayIndex + 1"
 					 :visible="event.visible"></div>
-			<hr>
 		</div>
 
 		<div class="form-group clearfix">
-			<button type="button" class="btn btn-default pull-right" @click="addEvent">
-				<span class="glyphicon glyphicon-plus-sign"></span>
-			</button>
+			<div class="col-sm-12">
+				<button type="button" class="btn btn-success pull-right" @click="addEvent">
+					<span class="glyphicon glyphicon-plus-sign"></span>
+					Add Event
+				</button>
+			</div>
 		</div>
 	</fieldset>
 </template>
@@ -122,3 +123,10 @@
 		}
 	}
 </script>
+
+<style lang="less" rel="stylesheet/less">
+	.event-container {
+		margin-bottom: 1em;
+		border-bottom: solid 2px white;
+	}
+</style>

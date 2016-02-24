@@ -1,33 +1,36 @@
 <template>
-	<label>{{all.length | pluralize 'Filter'}} ({{all.length}})</label>
+	<div class="clearfix">
+		<label>{{all.length | pluralize 'Filter'}} ({{all.length}})</label>
 
-	<div class="form-group-flex form-group" v-for="filter in all" track-by="id">
-		<select class="form-control width--auto" v-model="filter.target">
-			<option value="_event">Event</option>
-			<option v-for="entity in event.entities" :value="entity" :selected="$index == 0">
-				{{entity | capitalize}}
-			</option>
-		</select>
-
-		<input type="text" class="form-control" v-model="filter.prop">
-
-		<select class="form-control width--auto" v-model="filter.comparator">
-			<option v-for="comparator in comparators" :value="comparator" :selected="$index == 0">
-				{{{ comparator.text }}}
-			</option>
-		</select>
-
-		<input type="text" class="form-control" v-model="filter.value">
-
-		<button type="button" class="btn btn-danger" @click="remove($index)">
-			<span class="glyphicon glyphicon-minus-sign"></span>
+		<button type="button" class="btn btn-default btn-sm pull-right" @click="add">
+			<span class="glyphicon glyphicon-filter"></span>
+			Add Filter
 		</button>
 	</div>
 
-	<div class="form-group clearfix">
-		<button type="button" class="btn btn-default pull-right" @click="add">
-			<span class="glyphicon glyphicon-filter"></span>
-		</button>
+	<div class="col-sm-12">
+		<div class="form-group-flex form-group" v-for="filter in all" track-by="id">
+			<select class="form-control width--auto" v-model="filter.target">
+				<option value="_event">Event</option>
+				<option v-for="entity in event.entities" :value="entity" :selected="$index == 0">
+					{{entity | capitalize}}
+				</option>
+			</select>
+
+			<input type="text" class="form-control" v-model="filter.prop">
+
+			<select class="form-control width--auto" v-model="filter.comparator">
+				<option v-for="comparator in comparators" :value="comparator" :selected="$index == 0">
+					{{{ comparator.text }}}
+				</option>
+			</select>
+
+			<input type="text" class="form-control" v-model="filter.value">
+
+			<button type="button" class="btn btn-danger" @click="remove($index)">
+				<span class="glyphicon glyphicon-minus-sign"></span>
+			</button>
+		</div>
 	</div>
 </template>
 

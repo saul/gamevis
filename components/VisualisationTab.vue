@@ -1,27 +1,34 @@
 <template>
 	<div class="row app-row__main">
 		<div class="col-xs-4 main-panel__sidebar">
-			<form>
+			<form class="form-horizontal">
 				<div class="form-group">
-					<label>Title</label>
-					<input type="text" class="form-control" v-model="title">
+					<label class="col-sm-4">Title</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" v-model="title">
+					</div>
 				</div>
 
 				<div class="form-group">
-					<label>Game/Level</label>
-					<gv-game-level-select :selected.sync="gameLevel"></gv-game-level-select>
+					<label class="col-sm-4">Game/Level</label>
+					<div class="col-sm-8">
+						<gv-game-level-select class="col-sm-8" :selected.sync="gameLevel"></gv-game-level-select>
+					</div>
 				</div>
 
 				<div class="form-group">
-					<label>Sessions</label>
-					<gv-session-select :selected.sync="sessions" :game-level="gameLevel" :events.sync="allEvents"></gv-session-select>
+					<label class="col-sm-12">Sessions</label>
+
+					<div class="col-sm-12">
+						<gv-session-select :selected.sync="sessions" :game-level="gameLevel" :events.sync="allEvents"></gv-session-select>
+					</div>
 				</div>
 
 				<label>Events</label>
 				<gv-event-list :all="allEvents" :selected.sync="events" :sessions="sessions" :scene="scene"></gv-event-list>
 
 				<div class="form-group-flex">
-					<button type="submit" class="btn btn-success btn-lg btn-block" @click.prevent="visualise" :disabled="!readyToVisualise">
+					<button type="submit" class="btn btn-primary btn-lg btn-block" @click.prevent="visualise" :disabled="!readyToVisualise">
 						<span class="glyphicon glyphicon-eye-open"></span>
 						Visualise
 					</button>
@@ -227,5 +234,9 @@
 
 	.main-panel__sidebar {
 		background-color: @gray-lighter;
+
+		hr {
+			border-top: solid 2px white;
+		}
 	}
 </style>

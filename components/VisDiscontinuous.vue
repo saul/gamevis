@@ -5,11 +5,13 @@
 		</label>
 	</div>
 
-	<gv-radio-list v-if="event" label="Plot" :all="event.locations" :selected.sync="selectedLocation"></gv-radio-list>
-
-	<div class="form-group form-group-flex">
+	<div class="form-group-flex">
 		<label>Icon</label>
 		<iconpicker :value.sync="iconClass" class="input-sm"></iconpicker>
+	</div>
+
+	<div v-if="event" v-show="event.locations.length > 1">
+		<gv-radio-list label="Plot" :all="event.locations" :selected.sync="selectedLocation"></gv-radio-list>
 	</div>
 
 	<gv-event-filter-list v-ref:filters v-if="event" :event="event"></gv-event-filter-list>

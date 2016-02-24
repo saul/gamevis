@@ -1,6 +1,6 @@
 <template>
 	<fieldset :disabled="all.length == 0">
-		<div v-for="session in selected" track-by="id">
+		<div class="col-sm-12" v-for="session in selected" track-by="id">
 			<div class="form-group form-group-flex">
 				<select class="form-control" v-model="session.record" :disabled="all.length == 0" @change="sessionChange(session)">
 					<option v-for="record in all" :value="record">
@@ -13,18 +13,21 @@
 				</button>
 			</div>
 
-			<div class="gutter--left gutter--bottom">
-				<div class="form-group form-group-flex">
-					<label>Colour</label>
+			<div class="form-group">
+				<label class="col-sm-4">Colour</label>
+				<div class="col-sm-8">
 					<input type="color" v-model="session.colour" class="form-control input-sm">
 				</div>
 			</div>
 		</div>
 
 		<div class="form-group clearfix">
-			<button type="button" class="btn btn-default pull-right" @click="add">
-				<span class="glyphicon glyphicon-plus-sign"></span>
-			</button>
+			<div class="col-sm-12">
+				<button type="button" class="btn btn-success pull-right" @click="add">
+					<i class="fa fa-gamepad"></i>
+					Add Session
+				</button>
+			</div>
 		</div>
 	</fieldset>
 </template>

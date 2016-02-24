@@ -1,12 +1,14 @@
 <template>
 	<div class="form-group">
-		<label>{{label}}</label>
+		<label class="col-sm-4">{{label}}</label>
 
-		<div class="radio" v-for="element in all">
-			<label>
-				<input type="radio" v-model="selected" :value="element" :checked="$index == 0">
-				{{element | capitalize}}
-			</label>
+		<div class="col-sm-8">
+			<div class="radio" v-for="element in all">
+				<label>
+					<input type="radio" v-model="selected" :value="element" :checked="$index == 0">
+					{{element | capitalize}}
+				</label>
+			</div>
 		</div>
 	</div>
 </template>

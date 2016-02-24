@@ -5,9 +5,13 @@
 		</label>
 	</div>
 
-	<gv-radio-list v-if="event" label="Plot" :all="event.locations" :selected.sync="selectedLocation"></gv-radio-list>
+	<div v-if="event" v-show="event.locations.length > 1">
+		<gv-radio-list label="Plot" :all="event.locations" :selected.sync="selectedLocation"></gv-radio-list>
+	</div>
 
-	<gv-radio-list v-if="event" label="Group by" :all="event.entities" :selected.sync="groupByEntity"></gv-radio-list>
+	<div v-if="event" v-show="event.entities.length > 1">
+		<gv-radio-list label="Group by" :all="event.entities" :selected.sync="groupByEntity"></gv-radio-list>
+	</div>
 
 	<gv-event-filter-list v-ref:filters v-if="event" :event="event"></gv-event-filter-list>
 </template>

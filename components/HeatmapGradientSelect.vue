@@ -1,12 +1,14 @@
 <template>
 	<div class="form-group">
-		<label>Colour gradient</label>
+		<label class="col-sm-4">Colour gradient</label>
 
-		<select class="form-control" v-model="selected" :disabled="all.length == 0">
-			<option v-for="gradient in all" value="{{ gradient.path }}">
-				{{ gradient.baseName | capitalize }}
-			</option>
-		</select>
+		<div class="col-sm-8">
+			<select class="form-control" v-model="selected" :disabled="all.length == 0">
+				<option v-for="gradient in all" value="{{ gradient.path }}">
+					{{ gradient.baseName | capitalize }}
+				</option>
+			</select>
+		</div>
 	</div>
 </template>
 
