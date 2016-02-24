@@ -1,4 +1,6 @@
 <template>
+	<title v-if="selectedTab">Gamevis - {{ selectedTab.title }}</title>
+
 	<div class="container-fluid">
 		<gv-alerts v-ref:alerts></gv-alerts>
 
@@ -29,12 +31,19 @@
 </template>
 
 <script type="text/babel">
+	const ipc = window.require('electron').ipcRenderer;
+
 	export default {
 		el: 'body',
 		replace: false,
 		data: {
 			atomicTabs: 0,
 			tabs: [],
+		},
+		computed: {
+			selectedTab() {
+				return this.tabs.find(q => q.selected);
+			}
 		},
 		methods: {
 			addTab() {
@@ -72,10 +81,47 @@
 				}
 			},
 			switchTab(index) {
+				if (index < 0 || index >= this.tabs.length) {
+					console.warn('cannot switch to non-existent tab');
+					return;
+				}
+
 				this.tabs.forEach((q, i) => {
 					q.selected = i == index;
 				});
 			},
+			command(_, cmd) {
+				let selectedIndex = this.tabs.findIndex(q => q.selected);
+
+				switch (cmd) {
+					case 'new-tab':
+						this.addTab();
+						break;
+					case 'close-tab':
+						if (this.tabs.length === 1) {
+							window.close();
+						} else {
+							this.closeTab(selectedIndex);
+						}
+						break;
+					case 'next-tab':
+						this.switchTab(selectedIndex + 1);
+						break;
+					case 'previous-tab':
+						this.switchTab(selectedIndex - 1);
+						break;
+				}
+			},
+			keyDown(e) {
+				let cmdOrCtrl = e.metaKey || e.ctrlKey;
+				let numKey = e.which - 48;
+
+				if (cmdOrCtrl && numKey > 0 && numKey < 9) {
+					this.switchTab(numKey - 1);
+				} else if (cmdOrCtrl && numKey == 9) {
+					this.switchTab(this.tabs.length - 1);
+				}
+			}
 		},
 		events: {
 			error(err) {
@@ -84,6 +130,9 @@
 		},
 		ready() {
 			this.addTab();
+
+			document.onkeydown = this.keyDown.bind(this);
+			ipc.on('command', this.command.bind(this));
 		}
 	}
 </script>
