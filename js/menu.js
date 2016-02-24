@@ -85,14 +85,6 @@ let template = [
     label: 'View',
     submenu: [
       {
-        label: 'Reload',
-        accelerator: 'CmdOrCtrl+R',
-        click(item, focusedWindow) {
-          if (focusedWindow)
-            focusedWindow.reload();
-        }
-      },
-      {
         label: 'Toggle Full Screen',
         accelerator: (function () {
           if (process.platform == 'darwin')
@@ -103,19 +95,6 @@ let template = [
         click(item, focusedWindow) {
           if (focusedWindow)
             focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-        }
-      },
-      {
-        label: 'Toggle Developer Tools',
-        accelerator: (function () {
-          if (process.platform == 'darwin')
-            return 'Alt+Command+I';
-          else
-            return 'Ctrl+Shift+I';
-        })(),
-        click(item, focusedWindow) {
-          if (focusedWindow)
-            focusedWindow.toggleDevTools();
         }
       }
     ]
@@ -144,6 +123,32 @@ let template = [
         accelerator: 'CmdOrCtrl+Shift+[',
         click(item, focusedWindow) {
           sendCommand(focusedWindow, 'previous-tab');
+        }
+      }
+    ]
+  },
+  {
+    label: 'Developer',
+    submenu: [
+      {
+        label: 'Reload',
+        accelerator: 'CmdOrCtrl+R',
+        click(item, focusedWindow) {
+          if (focusedWindow)
+            focusedWindow.reload();
+        }
+      },
+      {
+        label: 'Toggle Developer Tools',
+        accelerator: (function () {
+          if (process.platform == 'darwin')
+            return 'Alt+Command+I';
+          else
+            return 'Ctrl+Shift+I';
+        })(),
+        click(item, focusedWindow) {
+          if (focusedWindow)
+            focusedWindow.toggleDevTools();
         }
       }
     ]
