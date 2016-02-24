@@ -195,12 +195,16 @@
 
 				let data = this.$refs.renderer.toDataURL('image/png');
 
-				dialog.showSaveDialog({
+				dialog.showSaveDialog(remote.getCurrentWindow(), {
 					title: 'Save visualisation',
 					filters: [
 						{name: 'PNG', extensions: ['png']},
 					]
 				}, filename => {
+					if (!filename) {
+						return;
+					}
+
 					let b64 = data.replace(/^data:image\/png;base64,/, '');
 					fs.writeFileSync(filename, b64, 'base64');
 				});
