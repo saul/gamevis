@@ -1,6 +1,7 @@
 var Sequelize = require('sequelize');
+const config = require('../config.json');
 
-module.exports = new Sequelize('postgres://gamevis:gamevis@localhost:5432/gamevis', {
+module.exports = new Sequelize(config.connectionString, {
   maxConcurrentQueries: 100,
   native: true,
   define: {
