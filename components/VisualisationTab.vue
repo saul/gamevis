@@ -234,6 +234,7 @@
 
 	.main-panel__sidebar {
 		background-color: @gray-lighter;
+		min-width: 400px;
 
 		hr {
 			border-top: solid 2px white;
