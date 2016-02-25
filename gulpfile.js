@@ -40,36 +40,47 @@ gulp.task('build:less', ['collect'], () => {
     .pipe(livereload());
 });
 
-var b = browserify({
-  entries: './js/web/app.js',
-  debug: true,
-  paths: [__dirname],
-  cache: {},
-  packageCache: {},
-  plugin: [watchify]
-})
-  .transform(vueify)
-  .transform(babelify, {'presets': ['es2015']})
-  .transform('browserify-css')
-  .on('update', bundle)
-  .on('log', gutil.log);
+function bundle(watch) {
+  var b = browserify({
+    entries: './js/web/app.js',
+    debug: true,
+    paths: [__dirname],
+    cache: {},
+    packageCache: {}
+  })
+    .transform(vueify)
+    .transform(babelify, {'presets': ['es2015']})
+    .transform('browserify-css')
+    .on('log', gutil.log);
 
-function bundle() {
-  return b.bundle()
-    .on('error', function(err) { console.error(err); this.emit('end'); })
-    .pipe(source('bundle.js'))
-    .pipe(buffer())
-    .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest(`${DIST_DIR}js`))
-    .pipe(livereload());
+  if (watch) {
+    b = watchify(b);
+  }
+
+  function rebundle() {
+    return b.bundle()
+      .on('error', function(err) { console.error(err); this.emit('end'); })
+      .pipe(source('bundle.js'))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({ loadMaps: true }))
+      .pipe(sourcemaps.write())
+      .pipe(gulp.dest(`${DIST_DIR}js`))
+      .pipe(livereload());
+  }
+
+  b.on('update', rebundle);
+  return rebundle();
 }
 
-gulp.task('build:js', ['collect'], bundle);
+gulp.task('build:js', ['collect'], () => {
+  bundle(false);
+});
 
 gulp.task('build', ['build:less', 'build:js']);
 
-gulp.task('watch', ['build'], () => {
+gulp.task('watch', ['build:less'], () => {
+  bundle(true);
+
   livereload.listen();
   gulp.watch('less/**/*', ['build:less']);
 });
