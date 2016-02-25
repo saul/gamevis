@@ -6,7 +6,8 @@
 			</button>
 
 			<h4 class="alert-heading">{{ alert.headline }}</h4>
-			<p v-if="alert.text">{{ alert.text | capitalize }}</p>
+
+			<p class="alert__text" v-if="alert.text">{{ alert.text | capitalize }}</p>
 
 			<pre v-if="alert.stack">{{ alert.stack }}</pre>
 		</div>
@@ -46,5 +47,10 @@
 		left: 1em;
 		right: 1em;
 		z-index: @zindex-navbar-fixed;
+	}
+
+	.alert__text {
+		font-family: @font-family-monospace;
+		white-space: pre;
 	}
 </style>
