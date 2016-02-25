@@ -41,6 +41,9 @@ var EntityProp = db.define('entity_prop', {
       fields: ['index', 'prop', 'session_id']
     },
     {
+      fields: ['session_id']
+    },
+    {
       method: 'BTREE',
       fields: ['tick']
     },
