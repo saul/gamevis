@@ -14,7 +14,7 @@
 		<gv-radio-list label="Plot" :all="event.locations" :selected.sync="selectedLocation"></gv-radio-list>
 	</div>
 
-	<gv-event-filter-list v-ref:filters v-if="event" :event="event"></gv-event-filter-list>
+	<gv-event-filter-list v-ref:filters v-if="event" :event="event" :sessions="sessions"></gv-event-filter-list>
 </template>
 
 <script type="text/babel">

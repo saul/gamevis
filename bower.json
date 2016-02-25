@@ -23,6 +23,7 @@
     "vis": "^4.14.0",
     "color": "^2.5.0",
     "components-font-awesome": "^4.5.0",
-    "fontawesome-iconpicker": "^1.2.0"
+    "fontawesome-iconpicker": "^1.2.0",
+    "select2": "^4.0.1"
   }
 }

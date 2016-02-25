@@ -22,6 +22,13 @@
   // fontawesome-iconpicker
   require('dist/components/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.css');
 
+  // select2
+  // Note: we need to require it through node instead of Browserify, otherwise
+  // select2 loads a separate instance of jQuery instead of using the one we've
+  // already loaded
+  window.require('./dist/components/select2/dist/js/select2');
+  require('dist/components/select2/dist/css/select2.css');
+
   window.db = window.require('./js/db');
   window.models = window.require('./js/models');
   
@@ -33,6 +40,7 @@
 
   Vue.component('gv-alerts', require('components/Alerts.vue'));
   Vue.component('gv-radio-list', require('components/RadioList.vue'));
+  Vue.component('gv-event-filter', require('components/EventFilter.vue'));
   Vue.component('gv-event-filter-list', require('components/EventFilterList.vue'));
   Vue.component('gv-game-level-select', require('components/GameLevelSelect.vue'));
   Vue.component('gv-session-select', require('components/SessionSelect.vue'));

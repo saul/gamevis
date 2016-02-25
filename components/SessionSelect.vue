@@ -131,7 +131,7 @@
 
 				console.time('session events');
 
-				db.query(`SELECT DISTINCT ON (name) name, locations, entities
+				db.query(`SELECT DISTINCT ON (name) name, data, locations, entities
 FROM events
 WHERE events.session_id IN (:sessionIds)
 ORDER BY name`, {
@@ -142,6 +142,7 @@ ORDER BY name`, {
 						this.events = results.map(row => {
 							return {
 								name: row.name,
+								keys: _.keys(row.data),
 								locations: _.keys(row.locations),
 								entities: _.keys(row.entities)
 							}
