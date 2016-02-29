@@ -306,7 +306,7 @@ func main() {
 					},
 					Entities: map[string]int32{
 						"hero": index,
-						"player": playerEnt.Index
+						"player": playerEnt.Index,
 					},
 					Data: map[string]interface{}{
 						"playerid": controllingPlayer,
