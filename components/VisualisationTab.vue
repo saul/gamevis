@@ -54,14 +54,12 @@
 	const dialog = remote.require('dialog');
 	const OverviewMesh = require('js/web/overview-mesh.js');
 
-	function tickToMsecs(tick) {
-		// TODO: replace 128 with actual tickrate!!
-		return tick * 1000 / 128;
+	function tickToMsecs(tick, tickRate) {
+		return tick * 1000 / tickRate;
 	}
 
-	function msecsToTick(msecs) {
-		// TODO: replace 128 with actual tickrate!!
-		return msecs * 128 / 1000;
+	function msecsToTick(msecs, tickRate) {
+		return msecs * tickRate / 1000;
 	}
 
 	export default {
@@ -133,8 +131,8 @@
 						id: -index,
 						content: 'Time range',
 						group: session.record.id,
-						start: tickToMsecs(session.tickRange[0]),
-						end: tickToMsecs(session.tickRange[1])
+						start: tickToMsecs(session.tickRange[0], session.record.tickrate),
+						end: tickToMsecs(session.tickRange[1], session.record.tickrate)
 					}
 				});
 
@@ -164,12 +162,14 @@
 					})
 					.then(results => {
 						this.timeline.items = this.timeline.items.concat(results.map(row => {
+							let session = this.sessions.find(s => s.record.id == row.session_id)
+
 							return {
 								id: row.id,
 								content: row.name,
 								group: row.session_id,
 								editable: false,
-								start: tickToMsecs(row.tick)
+								start: tickToMsecs(row.tick, session.record.tickrate)
 							}
 						}));
 					})
@@ -180,7 +180,10 @@
 				this.$broadcast('visualise', {overviewData: this.overviewData});
 
 				this.$refs.timeline.$on('moving', (item, cb) => {
-					item.session.tickRange = [item.start, item.end].map(msecsToTick);
+					item.session.tickRange = [
+						msecsToTick(item.start, item.session.record.tickrate),
+						msecsToTick(item.end, item.session.record.tickrate)
+					];
 					cb(item);
 				});
 			},

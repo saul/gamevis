@@ -305,11 +305,12 @@ function importDemoFile(path) {
 
       return [
         ...fulfilled,
-        query('INSERT INTO sessions (title, level, game, data) VALUES ($1, $2, $3, $4) RETURNING id', [
+        query('INSERT INTO sessions (title, level, game, data, tickrate) VALUES ($1, $2, $3, $4, $5) RETURNING id', [
           header.serverName,
           header.mapName,
           header.gameDirectory,
-          JSON.stringify({header})
+          JSON.stringify({header}),
+          Math.round(header.playbackTicks / header.playbackTime)
         ])
       ];
     })

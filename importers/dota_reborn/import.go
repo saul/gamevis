@@ -9,6 +9,7 @@ import (
 	"github.com/dotabuff/manta/dota"
 	"github.com/lib/pq"
 	"log"
+	"math"
 	"os"
 	"reflect"
 	"strings"
@@ -24,6 +25,13 @@ type EventRow struct {
 	Data      interface{}
 	Locations interface{}
 	Entities  interface{}
+}
+
+func round(f float64) int {
+	if math.Abs(f) < 0.5 {
+		return 0
+	}
+	return int(f + math.Copysign(0.5, f))
 }
 
 func processPropChange(pe *manta.PacketEntity, prop string, value interface{}) (string, *PropValueColumn, error) {
@@ -68,6 +76,7 @@ func main() {
 	var sessionId int
 	var propStream *sql.Stmt
 	var events []*EventRow
+	var tickrate int
 
 	skipProps := map[string]bool{
 		"m_iCursor.0000":                                          true,
@@ -98,7 +107,7 @@ func main() {
 		}
 
 		fmt.Print("Creating session...")
-		err = txn.QueryRow("INSERT INTO sessions (title, level, game, data) VALUES ($1, $2, $3, $4) RETURNING id", header.GetServerName(), header.GetMapName(), "dota_reborn", jsonHeader).Scan(&sessionId)
+		err = txn.QueryRow("INSERT INTO sessions (title, level, game, data, tickrate) VALUES ($1, $2, $3, $4, 30) RETURNING id", header.GetServerName(), header.GetMapName(), "dota_reborn", jsonHeader).Scan(&sessionId)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -222,6 +231,11 @@ func main() {
 		return nil
 	}))
 
+	parser.Callbacks.OnCDemoFileInfo(func(fi *dota.CDemoFileInfo) error {
+		tickrate = round(float64(fi.GetPlaybackTicks()) / float64(fi.GetPlaybackTime()))
+		return nil
+	})
+
 	const MAX_CLIENTS = 64
 	const NUM_ENT_ENTRY_BITS = 14
 	const NUM_ENT_ENTRIES = 1 << NUM_ENT_ENTRY_BITS
@@ -305,7 +319,7 @@ func main() {
 						"hero": *pos,
 					},
 					Entities: map[string]int32{
-						"hero": index,
+						"hero":   index,
 						"player": playerEnt.Index,
 					},
 					Data: map[string]interface{}{
@@ -411,6 +425,13 @@ func main() {
 			log.Fatal(err)
 		}
 		fmt.Println("ok")
+
+		fmt.Print("Updating tickrate...")
+		_, err = txn.Exec("UPDATE sessions SET tickrate=$1 WHERE id=$2", tickrate, sessionId)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("ok", tickrate)
 
 		fmt.Print("Committing transaction...")
 		err = txn.Commit()

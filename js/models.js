@@ -59,7 +59,8 @@ var Session = db.define('session', {
   title: {type: Sequelize.STRING, allowNull: false},
   level: {type: Sequelize.STRING, allowNull: false},
   game: {type: Sequelize.STRING, allowNull: false},
-  data: {type: Sequelize.JSONB}
+  data: {type: Sequelize.JSONB},
+  tickrate: {type: Sequelize.INTEGER, allowNull: false}
 });
 
 Session.hasMany(Event, {allowNull: false, onDelete: 'cascade'});

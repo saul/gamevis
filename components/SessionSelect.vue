@@ -110,7 +110,7 @@
 							game: this.gameLevel.game,
 							level: this.gameLevel.level
 						},
-						attributes: ['id', 'level', 'title', 'game'],
+						attributes: ['id', 'level', 'title', 'game', 'tickrate'],
 						order: [['id', 'DESC']],
 					})
 					.then(sessions => {
