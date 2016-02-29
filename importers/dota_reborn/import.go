@@ -265,6 +265,57 @@ func main() {
 
 		// flush buffered updates if enough ticks have passed
 		if (parser.Tick-lastFlush) > ENTITY_UPDATE_BUFFER_TICKS || lastFlush > parser.Tick {
+
+			// loop through all of the updates and map 'position' to movement events
+			for index, props := range updates.Entities {
+				// has this entity's position changed?
+				update, found := props["position"]
+				if !found {
+					continue
+				}
+
+				// is this entity a hero?
+				controllingPlayer := int32(-1)
+				for playerId, ent := range heroes {
+					if ent.Index == index {
+						controllingPlayer = playerId
+						break
+					}
+				}
+				if controllingPlayer < 0 {
+					continue
+				}
+
+				playerEnt, found := dotautil.LookupEntityByPropValue(parser, "m_iPlayerID", controllingPlayer)
+				if !found {
+					panic("unable to find player ID")
+				}
+
+				// due to Go's very strong typing, this is the nicest way to
+				// unbox the new position value
+				pos, ok := (update.Value.(*PropValueColumn)).Value.(*dotautil.Vector3)
+				if !ok {
+					panic("position was not a Vector3")
+				}
+
+				row := &EventRow{
+					Tick: update.Tick,
+					Name: "hero_move",
+					Locations: map[string]dotautil.Vector3{
+						"hero": *pos,
+					},
+					Entities: map[string]int32{
+						"hero": index,
+						"player": playerEnt.Index
+					},
+					Data: map[string]interface{}{
+						"playerid": controllingPlayer,
+					},
+				}
+
+				events = append(events, row)
+			}
+
 			updates.Flush(sessionId, propStream)
 			lastFlush = parser.Tick
 		}
