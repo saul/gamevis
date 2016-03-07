@@ -44,10 +44,12 @@
 				comparators: [
 					{text: '=', sql: '=', cast: 'text'},
 					{text: '&ne;', sql: '!=', cast: 'text'},
-					{text: '&lt;', sql: '<', cast: 'int'},
-					{text: '&le;', sql: '<=', cast: 'int'},
-					{text: '&gt;', sql: '>', cast: 'int'},
-					{text: '&ge;', sql: '>=', cast: 'int'}
+					{text: '&lt;', sql: '<', cast: 'float'},
+					{text: '&le;', sql: '<=', cast: 'float'},
+					{text: '&gt;', sql: '>', cast: 'float'},
+					{text: '&ge;', sql: '>=', cast: 'float'},
+					{text: '&amp;', sql: '&', cast: 'int', condition: '!= 0'},
+					{text: '!&amp;', sql: '&', cast: 'int', condition: '= 0'}
 				],
 				target: null,
 				allProps: [],
@@ -61,11 +63,12 @@
 				// fire change events
 				let prop = this.$els.propSelect.value;
 
-				if (this.target === '_event') {
-					return `AND (events.data->>${db.escape(prop)})::${this.comparator.cast} ${this.comparator.sql} ${db.escape(this.value)}`;
-				}
+				let query;
 
-				return `AND ((
+				if (this.target === '_event') {
+					query = `(events.data->>${db.escape(prop)})::${this.comparator.cast} ${this.comparator.sql} ${db.escape(this.value)}`;
+				} else {
+					query = `((
               SELECT entity_props.value
               FROM entity_props
               WHERE entity_props.index = (events.entities->>${db.escape(this.target)})::int
@@ -74,7 +77,16 @@
               AND entity_props.session_id = events.session_id
               ORDER BY entity_props.tick DESC
               LIMIT 1
-            )->>'value')::${this.comparator.cast} ${this.comparator.sql} ${db.escape(this.value)}`;
+            )->>'value')::${this.comparator.cast} ${this.comparator.sql} ${db.escape(this.value)}`
+
+					// if the query does not return a boolean value, we have to hard-code
+					// a condition
+					if (this.comparator.condition) {
+						query = `(${query}) ${this.comparator.condition}`;
+					}
+				}
+
+				return `AND ${query}`;
 			},
 			refreshProps() {
 				this.allProps = [];
