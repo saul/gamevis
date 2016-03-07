@@ -5,6 +5,13 @@
 		</label>
 	</div>
 
+	<div class="form-group">
+		<label for="opacity" class="col-sm-4">Opacity</label>
+		<div class="col-sm-8">
+			<input type="text" class="form-control" id="opacity" v-model="opacity">
+		</div>
+	</div>
+
 	<div v-if="event" v-show="event.locations.length > 1">
 		<gv-radio-list label="Plot" :all="event.locations" :selected.sync="selectedLocation"></gv-radio-list>
 	</div>
@@ -36,7 +43,8 @@
 				locations: [],
 				points: [],
 				sceneObjects: [],
-				sessionMaterials: []
+				sessionMaterials: [],
+				opacity: 1
 			}
 		},
 		methods: {
@@ -65,6 +73,7 @@
 							minTick: {type: 'f', value: 0},
 							maxTick: {type: 'f', value: 1},
 							fadeOld: {type: 'i', value: 0},
+							opacityScalar: {type: 'f', value: 1},
 						},
 						vertexShader: fs.readFileSync('shaders/OverviewPoint.vert', 'utf8'),
 						fragmentShader: fs.readFileSync('shaders/OverviewPoint.frag', 'utf8'),
@@ -127,6 +136,8 @@
 
 					material.uniforms.colour.value.setStyle(session.colour);
 					material.uniforms.fadeOld.value = this.fadeOverTime ? 1 : 0;
+
+					material.uniforms.opacityScalar.value = this.opacity;
 				}
 			},
 			visualise() {

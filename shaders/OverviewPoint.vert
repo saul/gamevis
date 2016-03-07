@@ -2,6 +2,7 @@ uniform sampler2D texture1;
 uniform int fadeOld;
 uniform float minTick;
 uniform float maxTick;
+uniform float opacityScalar;
 
 attribute float tick;
 
@@ -20,4 +21,6 @@ void main() {
   } else {
     opacity = 1.0;
   }
+
+  opacity *= opacityScalar;
 }
