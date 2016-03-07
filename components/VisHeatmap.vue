@@ -84,7 +84,7 @@
 				this.heatmap.display();
 			},
 			visualise(e) {
-				let queryString = `SELECT *, (events.locations ->> :location) AS position
+				let queryString = `SELECT session_id, tick, (events.locations ->> :location) AS position
           FROM events
           WHERE events.name = :event
           AND events.session_id IN (:sessionIds)

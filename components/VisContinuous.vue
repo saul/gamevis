@@ -130,7 +130,7 @@
 				}
 			},
 			visualise() {
-				let queryString = `SELECT *, (events.entities ->> :entity) AS entity, (events.locations ->> :location) AS position
+				let queryString = `SELECT tick, session_id, (events.entities ->> :entity) AS entity, (events.locations ->> :location) AS position
           FROM events
           WHERE events.name = :event
           AND events.session_id IN (:sessionIds)
