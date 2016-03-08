@@ -3,6 +3,7 @@
 const assert = require('assert');
 const electron = require('electron');
 const template = require('./js/menu');
+const argv = require('minimist')(process.argv.slice(2), {'boolean': true});
 
 const app = electron.app;
 const Menu = electron.Menu;
@@ -32,7 +33,10 @@ app.on('new-window', () => {
 
   let window = new BrowserWindow({width: size.width, height: size.height, icon: 'logo.png'});
   window.loadURL('file://' + __dirname + '/index.html');
-  window.webContents.openDevTools();
+
+  if (argv.dev) {
+    window.webContents.openDevTools();
+  }
 
   const id = window.id;
   windows[id] = window;

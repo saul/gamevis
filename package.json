@@ -46,6 +46,7 @@
     "electron-prebuilt": "^0.36.4",
     "jquery": "^2.2.0",
     "lodash": "^4.0.0",
+    "minimist": "^1.2.0",
     "pace": "0.0.4",
     "pg": "^4.4.3",
     "pg-copy-streams": "^0.3.0",
