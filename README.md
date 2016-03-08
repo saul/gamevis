@@ -12,6 +12,31 @@ Screenshot demonstrating two layered heatmap visualisations:
 
 <img src="screenshot.png" width="1024">
 
+## Installation
+
+### 1. Prerequisites
+
+Node & npm are already expected to be installed:
+
+```
+brew install libpqxx
+npm install -g gulp # required for building
+npm install # install app dependencies
+gulp # compile JavaScript and stylesheets
+```
+
+### 2. Database
+
+A Postgres server is by default expected to be running on `localhost`. The `config.json` file can be updated at the root of the project to specify a non-default database IP/port.
+
+By default the server is expected to have a database named `gamevis` with a username and password of `gamevis`.
+
+Note that no tables need to be generated - the application will automatically generate.
+
+### 3. Run the app
+
+The application can be started with `npm start`. However, no sessions are available by default. The importers (see below) can be used to import game sessions into the database.
+
 ## Visualisations
 
 Multiple visualisations can be show on a single visualisation (as shown in the screenshot):
@@ -30,7 +55,7 @@ Dota 2: Reborn | `importers/dota_reborn` | Run `import.go` with the path to the 
 
 ## Release log
 
-Gamevis is still a work-in-progress and is not expected to be in a production-ready state until Summer 2016. However, changes are committed frequently and any issues should be raised as bugs. Pull requests welcome of course!
+Gamevis is still a work-in-progress and is not expected to be in a production-ready state until Summer 2016. However, changes are committed frequently and any issues should be raised as bugs. Of course pull requests are welcome!
 
 ## Database
 

@@ -10,9 +10,6 @@
   // WebGL heatmap
   require('dist/components/webgl-heatmap/webgl-heatmap');
 
-  // seiyria/bootstrap-slider
-  require('dist/components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.css');
-
   // vis.js
   require('dist/components/vis/dist/vis.css');
 
