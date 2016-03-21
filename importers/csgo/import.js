@@ -10,6 +10,7 @@ var Promise = require('bluebird');
 var pg = require('pg');
 var copyFrom = require('pg-copy-streams').from;
 var XXHash = require('xxhash');
+var config = require('../../config.json');
 
 var db = require('../../js/db.js');
 var models = require('../../js/models.js');
@@ -278,7 +279,7 @@ function importDemoBuffer(client, buffer, session_id, callback) {
 
 function importDemoFile(path) {
   console.log('Connecting to database...');
-  var client = new pg.Client('postgres://gamevis:gamevis@localhost:5432/gamevis');
+  var client = new pg.Client(config.connectionString);
 
   var query = Promise.promisify(client.query, {context: client});
 
