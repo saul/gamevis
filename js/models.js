@@ -38,7 +38,7 @@ var EntityProp = db.define('entity_prop', {
 }, {
   indexes: [
     {
-      fields: ['index', 'prop', 'session_id']
+      fields: ['index', 'prop', 'session_id', 'tick']
     },
     {
       fields: ['session_id']
