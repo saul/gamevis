@@ -45,7 +45,7 @@
     "demofile": "^0.2.0",
     "electron-prebuilt": "^0.36.4",
     "jquery": "^2.2.0",
-    "lodash": "^4.0.0",
+    "lodash": "^3.10.1",
     "minimist": "^1.2.0",
     "pace": "0.0.4",
     "pg": "^4.4.3",
