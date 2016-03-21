@@ -136,7 +136,7 @@
 				}
 			},
 			visualise() {
-				let queryString = `SELECT tick, position, session_id, (events.locations ->> :location) AS position
+				let queryString = `SELECT tick, session_id, (events.locations ->> :location) AS position
           FROM events
           WHERE events.name = :event
           AND events.session_id IN (:sessionIds)
