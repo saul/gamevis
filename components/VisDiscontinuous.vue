@@ -82,6 +82,7 @@
 							minTick: {type: 'f', value: 0},
 							maxTick: {type: 'f', value: 1},
 							fadeOld: {type: 'i', value: 0},
+							opacityScalar: {type: 'f', value: 1},
 						},
 						vertexShader: fs.readFileSync('shaders/OverviewPoint.vert', 'utf8'),
 						fragmentShader: fs.readFileSync('shaders/OverviewPoint.frag', 'utf8'),
