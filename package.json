@@ -4,7 +4,8 @@
   "main": "background.js",
   "scripts": {
     "start": "electron .",
-    "docs": "jsdoc -c jsdoc.json ."
+    "docs": "jsdoc -c jsdoc.json .",
+    "sloc": "sloc --exclude '(^(\\.|node_modules|dist|bower_components|vendor|docs))|((\\.(go|ts|html|css|less)$))' --alias vue=js ./"
   },
   "license": "MIT",
   "repository": {
