@@ -8,9 +8,7 @@
 				</option>
 			</select>
 
-			<select v-el:prop-select class="width--100pc" :disabled="allProps.length == 0">
-				<option v-for="p in allProps" :value="p">{{p}}</option>
-			</select>
+			<input class="form-control" v-el:prop-select>
 
 			<button type="button" class="btn btn-danger" @click="$emit('close')">
 				<span class="glyphicon glyphicon-minus-sign"></span>
@@ -30,6 +28,14 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * A single conditional filter.
+	 * @module components/EventFilter
+	 *
+	 * @param {GameEvent[]} event
+	 * @param {Session[]} sessions
+	 */
+
 	export default {
 		props: {
 			event: {
@@ -58,6 +64,12 @@
 			}
 		},
 		methods: {
+			/**
+			 * Represents the current conditional as a SQL query.
+			 * @instance
+			 * @memberof module:components/EventFilter
+			 * @returns {string} SQL query
+			 */
 			sql() {
 				// we can't use v-model on the select because select2 annoyingly doesn't
 				// fire change events
@@ -88,6 +100,12 @@
 
 				return `AND ${query}`;
 			},
+
+			/**
+			 * Update the props drop-down. Called on ready and when the target is changed.
+			 * @instance
+			 * @memberof module:components/EventFilter
+			 */
 			refreshProps() {
 				this.allProps = [];
 
@@ -121,7 +139,7 @@ ORDER BY prop`;
 		},
 		ready() {
 			let $propSelect = $(this.$els.propSelect);
-			$propSelect.select2();
+			//$propSelect.select2();
 
 			this.refreshProps();
 		}

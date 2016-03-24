@@ -13,11 +13,20 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * Component for selecting a heatmap gradient.
+	 * @module components/HeatmapGradientSelect
+	 *
+	 * @param {string} selected - Two way. Path to gradient image.
+	 */
+
 	const assert = window.require('assert');
 	const fs = window.require('fs');
 	const path = window.require('path');
 
-	// path to the gradient textures directory
+	/**
+	 * Path to the gradient textures directory
+	 */
 	const GRADIENT_BASE = 'img/gradients';
 
 	export default {

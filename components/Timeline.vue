@@ -3,10 +3,24 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * Component for displaying a Vis.js timeline.
+	 * See vis.js documentation for info on items and groups.
+	 * @module components/Timeline
+	 *
+	 * @param {object[]} items
+	 * @param {object[]} groups
+	 */
+
 	const vis = window.require('./dist/components/vis/dist/vis');
 
 	export default {
-		props: ['items', 'groups'],
+		props: {
+			items: {
+				required: true
+			},
+			groups: {}
+		},
 		data() {
 			return {
 				timeline: null

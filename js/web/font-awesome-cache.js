@@ -1,8 +1,17 @@
+/**
+ * Cache fontawesome Unicode codepoints.
+ * Stores a mapping of CSS class name -> Unicode codepoint.
+ */
 class FACache {
   constructor() {
     this.cache = {};
   }
 
+  /**
+   * Get or compute a codepoint for a given class name.
+   * @param {string} className - CSS classname
+   * @returns {string} Unicode codepoint
+   */
   get(className) {
     if (this.cache.hasOwnProperty(className)) {
       return this.cache[className];

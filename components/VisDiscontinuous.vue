@@ -18,6 +18,19 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * Component for rendering discontinuous (icon quad) visualisations.
+	 * @module components/VisDiscontinuous
+	 *
+	 * @param {GameEvent} event
+	 * @param {GameEvent[]} all - All game events for this session set
+	 * @param {GameEvent[]} available - Two way. Game events that can be visualised by this component
+	 * @param {Session[]} sessions
+	 * @param {ThreeScene} scene - Three.js scene
+	 * @param {number} renderOrder - Render order for scene objects (used for layering)
+	 * @param {boolean} visible - Visualisation visible
+	 */
+
 	const _ = window.require('lodash');
 	const THREE = window.require('three');
 	const fs = window.require('fs');
@@ -25,7 +38,30 @@
 
 	export default {
 		replace: false,
-		props: ['event', 'all', 'available', 'sessions', 'scene', 'renderOrder', 'visible'],
+		props: {
+			event: {
+				required: true
+			},
+			all: {
+				required: true
+			},
+			available: {
+				required: true,
+				twoWay: true
+			},
+			sessions: {
+				required: true
+			},
+			scene: {
+				required: true
+			},
+			renderOrder: {
+				required: true
+			},
+			visible: {
+				required: true
+			},
+		},
 		data() {
 			return {
 				iconClass: 'fa-crosshairs',
@@ -43,6 +79,11 @@
 			}
 		},
 		methods: {
+			/**
+			 * Updates `this.available` with events that have a location
+			 * @instance
+			 * @memberof module:components/VisDiscontinuous
+			 */
 			updateAvailable() {
 				if (this.all) {
 					this.available = this.all.filter(e => e.locations.length > 0);
@@ -50,11 +91,23 @@
 					this.available = [];
 				}
 			},
+
+			/**
+			 * Remove all objects from the scene.
+			 * @instance
+			 * @memberof module:components/VisDiscontinuous
+			 */
 			clear() {
 				this.sceneObjects.forEach(m => this.scene.remove(m));
 				this.sceneObjects = [];
 				this.sessionMaterials = [];
 			},
+
+			/**
+			 * Recreate the scene based on `this.points`
+			 * @instance
+			 * @memberof module:components/VisDiscontinuous
+			 */
 			updateScene() {
 				this.clear();
 
@@ -123,6 +176,11 @@
 			},
 		},
 		events: {
+			/**
+			 * @instance
+			 * @memberof module:components/VisDiscontinuous
+			 * @listens updateFrame
+			 */
 			updateFrame() {
 				for (let i = 0; i < this.sessionMaterials.length; ++i) {
 					let material = this.sessionMaterials[i].material;
@@ -136,6 +194,12 @@
 					material.uniforms.fadeOld.value = this.fadeOverTime ? 1 : 0;
 				}
 			},
+
+			/**
+			 * @instance
+			 * @memberof module:components/VisDiscontinuous
+			 * @listens visualise
+			 */
 			visualise() {
 				let queryString = `SELECT tick, session_id, (events.locations ->> :location) AS position
           FROM events

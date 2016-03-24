@@ -14,6 +14,15 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * Component for displaying an array as a radio list.
+	 * @module components/RadioList
+	 *
+	 * @param {string} label - Radio list label.
+	 * @param {T[]} all - Radio list options.
+	 * @param {T} selected - Two way. Selected value.
+	 */
+
 	export default {
 		props: {
 			label: {

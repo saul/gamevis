@@ -15,6 +15,19 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * Alert component for overlaying notifications.
+	 * @module components/Alerts
+	 */
+
+	/**
+	 * Error event.
+	 *
+	 * @event error
+	 * @global
+	 * @type {Error}
+	 */
+
 	export default {
 		data() {
 			return {
@@ -22,6 +35,13 @@
 			}
 		},
 		events: {
+			/**
+			 * Converts an exception into an error alert.
+			 * @instance
+			 * @memberof module:components/Alerts
+			 * @listens error
+			 * @param {Error} error
+			 */
 			error(error) {
 				this.alerts.push({
 					className: 'danger',
@@ -31,6 +51,12 @@
 			}
 		},
 		methods: {
+			/**
+			 * Dismiss an alert.
+			 * @instance
+			 * @memberof module:components/Alerts
+			 * @param {number} index
+			 */
 			dismiss(index) {
 				this.alerts.splice(index, 1);
 			},

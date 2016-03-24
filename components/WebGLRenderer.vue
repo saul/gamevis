@@ -5,6 +5,26 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * Component for setting up Three.js and running the render loop.
+	 * @module components/WebGLRenderer
+	 *
+	 * @param {ThreeCamera} camera - Two way. Three.js camera object
+	 * @param {ThreeScene} scene - Two way. Three.js scene
+	 */
+
+	/**
+	 * Called per-frame at each iteration of the render loop.
+	 * @event render
+	 * @global
+	 */
+
+	/**
+	 * Called at the end of each iteration of the render loop.
+	 * @event postrender
+	 * @global
+	 */
+
 	const THREE = window.require('three');
 	const Stats = window.require('stats.js');
 
@@ -25,6 +45,13 @@
 			}
 		},
 		methods: {
+			/**
+			 * Render a single frame.
+			 * @instance
+			 * @memberof module:components/WebGLRenderer
+			 * @fires render
+			 * @fires postrender
+			 */
 			render() {
 				window.requestAnimationFrame(this.render.bind(this));
 
@@ -34,6 +61,14 @@
 				this.$emit('postrender');
 				this.stats.end();
 			},
+
+			/**
+			 * Save the canvas to an image.
+			 * @instance
+			 * @memberof module:components/WebGLRenderer
+			 * @param {string} type - Image type
+			 * @returns {string} data URL
+			 */
 			toDataURL(type) {
 				return this.canvas.toDataURL(type);
 			}

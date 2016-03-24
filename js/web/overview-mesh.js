@@ -1,6 +1,14 @@
 const THREE = window.require('three');
 
+/**
+ * Overview mesh that is sized and positioned to cover an entire level.
+ * Uses coordinates from the overview data.
+ */
 class OverviewMesh extends THREE.Mesh {
+  /**
+   * @param {OverviewData} overviewData
+   * @param {ThreeMaterial} material
+   */
   constructor(overviewData, material) {
     let geometry = new THREE.Geometry();
 

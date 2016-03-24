@@ -31,6 +31,11 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * Root application component, contains all components.
+	 * @module components/App
+	 */
+
 	const ipc = window.require('electron').ipcRenderer;
 
 	export default {
@@ -46,6 +51,11 @@
 			}
 		},
 		methods: {
+			/**
+			 * Adds a tab to the window.
+			 * @instance
+			 * @memberof module:components/App
+			 */
 			addTab() {
 				let i = this.tabs.push({
 					id: this.atomicTabs++,
@@ -55,6 +65,13 @@
 
 				this.switchTab(i - 1);
 			},
+
+			/**
+			 * Closes an open tab, switching to the left tab if possible.
+			 * @instance
+			 * @memberof module:components/App
+			 * @param {number} index
+			 */
 			closeTab(index) {
 				// find index of the selected tab
 				let selectedIndex = this.tabs.findIndex(q => q.selected);
@@ -80,6 +97,12 @@
 					return this.switchTab(index - 1);
 				}
 			},
+			/**
+			 * Switch active tab.
+			 * @instance
+			 * @memberof module:components/App
+			 * @param index
+			 */
 			switchTab(index) {
 				if (index < 0 || index >= this.tabs.length) {
 					console.warn('cannot switch to non-existent tab');
@@ -90,6 +113,12 @@
 					q.selected = i == index;
 				});
 			},
+			/**
+			 * Command received over IPC from the renderer process.
+			 * @instance
+			 * @memberof module:components/App
+			 * @param {string} cmd
+			 */
 			command(_, cmd) {
 				let selectedIndex = this.tabs.findIndex(q => q.selected);
 
@@ -112,6 +141,12 @@
 						break;
 				}
 			},
+			/**
+			 * Handle key press (switching tabs)
+			 * @instance
+			 * @memberof module:components/App
+			 * @param {KeyEvent} e
+			 */
 			keyDown(e) {
 				let cmdOrCtrl = e.metaKey || e.ctrlKey;
 				let numKey = e.which - 48;
@@ -124,6 +159,12 @@
 			}
 		},
 		events: {
+			/**
+			 * Re-emits any error events received to {@link components/Alerts}
+			 * @instance
+			 * @memberof module:components/App
+			 * @listens error
+			 */
 			error(err) {
 				this.$refs.alerts.$emit('error', err);
 			}

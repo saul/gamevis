@@ -24,6 +24,19 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * Component for rendering continuous (connected line) visualisations.
+	 * @module components/VisContinuous
+	 *
+	 * @param {GameEvent} event
+	 * @param {GameEvent[]} all - All game events for this session set
+	 * @param {GameEvent[]} available - Two way. Game events that can be visualised by this component
+	 * @param {Session[]} sessions
+	 * @param {ThreeScene} scene - Three.js scene
+	 * @param {number} renderOrder - Render order for scene objects (used for layering)
+	 * @param {boolean} visible - Visualisation visible
+	 */
+
 	const _ = window.require('lodash');
 	const color = window.require('./dist/components/color/one-color-all-debug');
 	const faCache = require('js/web/font-awesome-cache');
@@ -34,7 +47,30 @@
 
 	export default {
 		replace: false,
-		props: ['event', 'all', 'available', 'sessions', 'scene', 'renderOrder', 'visible'],
+		props: {
+			event: {
+				required: true
+			},
+			all: {
+				required: true
+			},
+			available: {
+				required: true,
+				twoWay: true
+			},
+			sessions: {
+				required: true
+			},
+			scene: {
+				required: true
+			},
+			renderOrder: {
+				required: true
+			},
+			visible: {
+				required: true
+			},
+		},
 		data() {
 			return {
 				fadeOverTime: true,
@@ -48,6 +84,11 @@
 			}
 		},
 		methods: {
+			/**
+			 * Updates `this.available` with events that have a location
+			 * @instance
+			 * @memberof module:components/VisContinuous
+			 */
 			updateAvailable() {
 				if (this.all) {
 					this.available = this.all.filter(e => e.locations.length > 0);
@@ -55,11 +96,23 @@
 					this.available = [];
 				}
 			},
+
+			/**
+			 * Remove all objects from the scene.
+			 * @instance
+			 * @memberof module:components/VisContinuous
+			 */
 			clear() {
 				this.sceneObjects.forEach(m => this.scene.remove(m));
 				this.sceneObjects = [];
 				this.sessionMaterials = [];
 			},
+
+			/**
+			 * Recreate the scene based on `this.points`
+			 * @instance
+			 * @memberof module:components/VisContinuous
+			 */
 			updateScene() {
 				this.clear();
 
@@ -125,6 +178,11 @@
 			}
 		},
 		events: {
+			/**
+			 * @instance
+			 * @memberof module:components/VisContinuous
+			 * @listens updateFrame
+			 */
 			updateFrame() {
 				for (let i = 0; i < this.sessionMaterials.length; ++i) {
 					let material = this.sessionMaterials[i].material;
@@ -140,6 +198,12 @@
 					material.uniforms.opacityScalar.value = this.opacity;
 				}
 			},
+
+			/**
+			 * @instance
+			 * @memberof module:components/VisContinuous
+			 * @listens visualise
+			 */
 			visualise() {
 				let queryString = `SELECT tick, session_id, (events.entities ->> :entity) AS entity, (events.locations ->> :location) AS position
           FROM events

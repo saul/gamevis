@@ -1,6 +1,21 @@
+/**
+ * @module models
+ */
+
 var Sequelize = require('sequelize');
 var db = require('./db');
 
+/**
+ * event table definition
+ *
+ * @memberof module:models
+ * @type {object}
+ * @property {number} tick
+ * @property {string} name
+ * @property {object} data
+ * @property {string[]} locations
+ * @property {string[]} entities
+ */
 var Event = db.define('event', {
   tick: {type: Sequelize.INTEGER, allowNull: false},
   name: {type: Sequelize.STRING, allowNull: false},
@@ -30,6 +45,16 @@ var Event = db.define('event', {
   ]
 });
 
+/**
+ * entity_prop table definition
+ *
+ * @memberof module:models
+ * @type {object}
+ * @property {number} index
+ * @property {number} tick
+ * @property {string} prop
+ * @property {{value: any}} value
+ */
 var EntityProp = db.define('entity_prop', {
   index: {type: Sequelize.INTEGER, allowNull: false},
   tick: {type: Sequelize.INTEGER, allowNull: false},
@@ -55,6 +80,16 @@ var EntityProp = db.define('entity_prop', {
   ]
 });
 
+/**
+ * session model
+ * @memberof module:models
+ * @type {object}
+ * @property {string} title
+ * @property {string} level
+ * @property {string} game
+ * @property {object} data
+ * @property {number} tickrate
+ */
 var Session = db.define('session', {
   title: {type: Sequelize.STRING, allowNull: false},
   level: {type: Sequelize.STRING, allowNull: false},

@@ -7,16 +7,41 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * Contains a list of visualisation components and filter lists.
+	 * Keeps track of layer ordering and whether each layer should be rendered or not.
+	 * @module components/GameLevelSelect
+	 *
+	 * @param {GameLevel} selected - Two way
+	 */
+
+	/**
+	 * @typedef {object} GameLevel
+	 * @global
+	 * @property {string} game - Short name of game
+	 * @property {string} level - Level name
+	 */
+
 	const db = window.db;
 
 	export default {
-		props: ['selected'],
+		props: {
+			selected: {
+				required: true,
+				twoWay: true
+			},
+		},
 		data() {
 			return {
 				gameLevels: [],
 			}
 		},
 		methods: {
+			/**
+			 * Refreshes `this.gameLevels` with the database.
+			 * @instance
+			 * @memberof module:components/GameLevelSelect
+			 */
 			refresh() {
 				this.gameLevels = [];
 

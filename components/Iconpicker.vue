@@ -8,11 +8,19 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * Component for selecting a fontawesome icon.
+	 * @module components/Iconpicker
+	 *
+	 * @param {string} value - Two way. CSS class name.
+	 */
+
 	require('dist/components/fontawesome-iconpicker/dist/js/fontawesome-iconpicker');
 
 	export default {
 		props: {
 			value: {
+				required: true,
 				twoWay: true
 			}
 		},

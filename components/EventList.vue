@@ -54,10 +54,52 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * Contains a list of visualisation components and filter lists.
+	 * Keeps track of layer ordering and whether each layer should be rendered or not.
+	 * @module components/EventList
+	 *
+	 * @param {GameEvent[]} all - All events from the session set
+	 * @param {EventVisualisation[]} selected - Two way: Events to be visualised
+	 * @param {Session[]} sessions
+	 * @param {ThreeScene} scene - Three.js render scene
+	 */
+
+	/**
+	 * Defines a visualisation to be used.
+	 * @typedef {object} VisDefinition
+	 * @global
+	 * @property {string} name - Friendly name (displayed in UI)
+	 * @property {string} component - Name of Vue.js component
+	 */
+
+	/**
+	 * @typedef {object} EventVisualisation
+	 * @global
+	 * @property {GameEvent} event - Event to be visualised
+	 * @property {VisDefinition} type - Visualisation type
+	 * @property {GameEvent[]} available - Events that can be visualised with this visualisation.
+	 * @property {boolean} visible - Should render?
+	 */
+
 	var eventUid = 0;
 
 	export default {
-		props: ['all', 'selected', 'sessions', 'scene'],
+		props: {
+			all: {
+				required: true
+			},
+			selected: {
+				required: true,
+				twoWay: true
+			},
+			sessions: {
+				required: true,
+			},
+			scene: {
+				required: true
+			}
+		},
 		data() {
 			return {
 				types: [
@@ -81,6 +123,11 @@
 			}
 		},
 		methods: {
+			/**
+			 * Add a new event visualisation to the list.
+			 * @instance
+			 * @memberof module:components/EventList
+			 */
 			addEvent() {
 				this.selected.unshift({
 					id: eventUid++,
@@ -91,12 +138,33 @@
 					visible: true
 				});
 			},
+
+			/**
+			 * Remove an event visualisation.
+			 * @instance
+			 * @memberof module:components/EventList
+			 * @param {number} index
+			 */
 			removeEvent(index) {
 				this.selected.splice(index, 1);
 			},
+
+			/**
+			 * Toggle the visibility of an event visualisation.
+			 * @instance
+			 * @memberof module:components/EventList
+			 * @param {number} index
+			 */
 			toggle(index) {
 				this.selected[index].visible = !this.selected[index].visible;
 			},
+
+			/**
+			 * Move an event visualisation up the render order.
+			 * @instance
+			 * @memberof module:components/EventList
+			 * @param {number} index
+			 */
 			moveUp(index) {
 				if (index == this.selected.length - 1) {
 					return;
@@ -106,6 +174,13 @@
 				this.selected.splice(index, 1);
 				this.selected.splice(index + 1, 0, event);
 			},
+
+			/**
+			 * Move an event visualisation down the render order.
+			 * @instance
+			 * @memberof module:components/EventList
+			 * @param {number} index
+			 */
 			moveDown(index) {
 				if (index == 0) {
 					return;
@@ -115,8 +190,14 @@
 				this.selected.splice(index, 1);
 				this.selected.splice(index - 1, 0, event);
 			},
+
+			/**
+			 * Returns this.selected in reverse (render) order.
+			 * @instance
+			 * @memberof module:components/EventList
+			 * @returns {EventVisualisation[]}
+			 */
 			renderOrdered() {
-				// render order is the reverse order of this.selected
 				// we need to add 'arrayIndex' so we know what its index is into this.selected
 				return this.selected.map((e, i) => Object.assign(e, {arrayIndex: i})).reverse();
 			}

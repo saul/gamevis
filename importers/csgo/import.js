@@ -1,3 +1,9 @@
+/**
+ * Command-line module that imports CSGO demo files into Gamevis.
+ *
+ * @module importers/csgo/import
+ */
+
 'use strict';
 
 var fs = require('fs');
@@ -15,6 +21,13 @@ var config = require('../../config.json');
 var db = require('../../js/db.js');
 var models = require('../../js/models.js');
 
+/**
+ * Imports a demofile buffer into the database.
+ * @param {PgClient} client
+ * @param {Buffer} buffer - Demo file buffer
+ * @param {number} session_id - New session ID
+ * @param callback
+ */
 function importDemoBuffer(client, buffer, session_id, callback) {
   var demo = new demofile.DemoFile();
   var pace;
@@ -33,6 +46,11 @@ function importDemoBuffer(client, buffer, session_id, callback) {
   var tempDeferredFilename = 'deferred_' + Math.random() + '.tmp';
   var entityPropStream = fs.createWriteStream(tempDeferredFilename);
 
+  /**
+   * Find the entity index of a user ID
+   * @param {number} userId
+   * @returns {number} entity index
+   */
   function entityIndexOfUserId(userId) {
     var index = players.findIndex(player => player && player.userId === userId);
 
@@ -42,6 +60,9 @@ function importDemoBuffer(client, buffer, session_id, callback) {
     }
   }
 
+  /**
+   * Writes all accumulated entity updates to the entity_props stream.
+   */
   function flushAccumulatedEntityUpdates() {
     for (var update of bufferedEntityUpdates.values()) {
       writeRow(entityPropStream, update);
@@ -51,6 +72,11 @@ function importDemoBuffer(client, buffer, session_id, callback) {
     lastEntityUpdateFlushTick = demo.currentTick;
   }
 
+  /**
+   * Write an array of values to a stream as TSV
+   * @param {Writable} stream
+   * @param {any[]} values
+   */
   function writeRow(stream, values) {
     var row = values.map(val => {
       switch (typeof val) {
@@ -118,6 +144,12 @@ function importDemoBuffer(client, buffer, session_id, callback) {
       .catch(callback);
   });
 
+  /**
+   * Convert and cell and cell normal to a world-space coordinate.
+   * @param {number} cell
+   * @param {number} f
+   * @returns {number} world-space coordinate
+   */
   function coordFromCell(cell, f) {
     const CELL_BITS = 5;
     const MAX_COORD_INTEGER = 16384;
@@ -277,6 +309,11 @@ function importDemoBuffer(client, buffer, session_id, callback) {
   demo.parse(buffer);
 }
 
+/**
+ * Imports a CSGO demo file into the database.
+ * @param {string} path - Path to demo file
+ * @returns {Promise}
+ */
 function importDemoFile(path) {
   console.log('Connecting to database...');
   var client = new pg.Client(config.connectionString);

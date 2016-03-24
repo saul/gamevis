@@ -33,6 +33,15 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * Component for displaying an array as a radio list.
+	 * @module components/SessionSelect
+	 *
+	 * @param {GameLevel} gameLevel
+	 * @param {Session[]} selected
+	 * @param {GameEvent[]} events
+	 */
+
 	const color = window.require('./dist/components/color/one-color-all-debug');
 
 	const _ = window.require('lodash');
@@ -44,14 +53,64 @@
 
 	let sessionUid = 0;
 
+	/**
+	 * @typedef {object} Session
+	 * @global
+	 * @property {number} id - Monotonic ID (unique per window).
+	 * @property {SessionRecord} record - Database record.
+	 * @property {number} minTick - First tick that an event occurred.
+	 * @property {number} maxTick - Last tick that an event occurred.
+	 * @property {string} colour - CSS hex string colour for this session.
+	 * @property {number[]} tickRange - Tick range for filtering. Only visualise data from between [min,max].
+	 */
+
+	/**
+	 * @typedef {object} SessionRecord
+	 * @global
+	 * @property {number} id - Database row ID
+	 * @property {string} level - Level name
+	 * @property {string} title - Session title
+	 * @property {string} game - Game name
+	 * @property {number} tickrate - Ticks per second
+	 */
+
+	/**
+	 * Definition of an event.
+	 * Note that this is not a specific instance of an event, but a schema for an event.
+	 * @typedef {object} GameEvent
+	 * @global
+	 * @property {string} name - Event name
+	 * @property {string[]} keys - Event data keys (e.g., ["weapon", "damage"])
+	 * @property {string[]} locations - Location keys (e.g., ["detonation", "origin"])
+	 * @property {string[]} entities - Entity keys (e.g., ["grenade", "player"])
+	 */
+
 	export default {
-		props: ['gameLevel', 'selected', 'events'],
+		props: {
+			gameLevel: {
+				required: true
+			},
+			selected: {
+				required: true,
+				twoWay: true
+			},
+			events: {
+				required: true,
+				twoWay: true
+			}
+		},
 		data() {
 			return {
 				all: []
 			}
 		},
 		methods: {
+			/**
+			 * Add a new session.
+			 * Generates a new colour based on the colour of the previous session.
+			 * @instance
+			 * @memberof module:components/SessionSelect
+			 */
 			add() {
 				let hue = Math.random();
 
@@ -77,9 +136,23 @@
 				// trigger a 'change' so we grab the tick range data
 				this.sessionChange(session);
 			},
+
+			/**
+			 * Remove a selected session.
+			 * @instance
+			 * @memberof module:components/SessionSelect
+			 * @param {number} index
+			 */
 			remove(index) {
 				this.selected.splice(index, 1);
 			},
+
+			/**
+			 * Find the minTick and maxTick for a session.
+			 * @instance
+			 * @memberof module:components/SessionSelect
+			 * @param {Session} session
+			 */
 			sessionChange(session) {
 				this.refreshEvents();
 
@@ -102,6 +175,12 @@
 					})
 					.catch(err => this.$dispatch('error', err));
 			},
+
+			/**
+			 * Refresh sessions list.
+			 * @instance
+			 * @memberof module:components/SessionSelect
+			 */
 			refresh() {
 				this.all = [];
 
@@ -118,6 +197,12 @@
 					})
 					.catch(err => this.$dispatch('error', err));
 			},
+
+			/**
+			 * Aggregate events from all selected sessions and determine the schema of each.
+			 * @instance
+			 * @memberof module:components/SessionSelect
+			 */
 			refreshEvents() {
 				const sessionIds = [].concat(this.selected)
 					.filter(s => s.record)

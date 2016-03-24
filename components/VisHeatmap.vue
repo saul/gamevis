@@ -16,13 +16,49 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * Component for rendering heatmap visualisations.
+	 * @module components/Heatmap
+	 *
+	 * @param {GameEvent} event
+	 * @param {GameEvent[]} all - All game events for this session set
+	 * @param {GameEvent[]} available - Two way. Game events that can be visualised by this component
+	 * @param {Session[]} sessions
+	 * @param {ThreeScene} scene - Three.js scene
+	 * @param {number} renderOrder - Render order for scene objects (used for layering)
+	 * @param {boolean} visible - Visualisation visible
+	 */
+
 	const _ = window.require('lodash');
 	const THREE = window.require('three');
 	const OverviewMesh = require('js/web/overview-mesh');
 
 	export default {
 		replace: false,
-		props: ['event', 'all', 'available', 'sessions', 'scene', 'renderOrder', 'visible'],
+		props: {
+			event: {
+				required: true
+			},
+			all: {
+				required: true
+			},
+			available: {
+				required: true,
+				twoWay: true
+			},
+			sessions: {
+				required: true
+			},
+			scene: {
+				required: true
+			},
+			renderOrder: {
+				required: true
+			},
+			visible: {
+				required: true
+			},
+		},
 		data() {
 			return {
 				selectedLocation: null,
@@ -35,6 +71,11 @@
 			}
 		},
 		methods: {
+			/**
+			 * Updates `this.available` with events that have a location
+			 * @instance
+			 * @memberof module:components/VisHeatmap
+			 */
 			updateAvailable() {
 				if (this.all) {
 					this.available = this.all.filter(e => e.locations.length > 0);
@@ -42,11 +83,24 @@
 					this.available = [];
 				}
 			},
+
+			/**
+			 * Remove all objects from the scene.
+			 * @instance
+			 * @memberof module:components/VisHeatmap
+			 */
 			clear() {
 				if (this.mesh) {
 					this.scene.remove(this.mesh);
 				}
 			},
+
+			/**
+			 * Recreate the scene based on the available data.
+			 * @instance
+			 * @memberof module:components/VisHeatmap
+			 * @param {OverviewData} overviewData
+			 */
 			updateScene(overviewData) {
 				this.clear();
 
@@ -63,12 +117,24 @@
 
 				this.scene.add(this.mesh);
 			},
+
+			/**
+			 * Filter points based on its session's tick range
+			 * @instance
+			 * @memberof module:components/VisHeatmap
+			 */
 			updateFilteredPoints() {
 				this.filteredPoints = this.points.filter(point => {
 					let [min, max] = point.session.tickRange;
 					return point.tick >= min && point.tick <= max;
 				});
 			},
+
+			/**
+			 * Inform Three.js to reupload the texture to the GPU.
+			 * @instance
+			 * @memberof module:components/VisHeatmap
+			 */
 			markTextureNeedsUpdate() {
 				if (!this.mesh) {
 					console.warn('cannot mark heatmap texture as needsUpdate: no mesh available');
@@ -79,10 +145,21 @@
 			}
 		},
 		events: {
+			/**
+			 * @instance
+			 * @memberof module:components/VisHeatmap
+			 * @listens updateFrame
+			 */
 			updateFrame() {
 				this.heatmap.update();
 				this.heatmap.display();
 			},
+
+			/**
+			 * @instance
+			 * @memberof module:components/VisHeatmap
+			 * @listens visualise
+			 */
 			visualise(e) {
 				let queryString = `SELECT session_id, tick, (events.locations ->> :location) AS position
           FROM events
@@ -142,6 +219,7 @@
 				{deep: true}
 			);
 
+			// when the gradient path changes, reupload the texture to the GPU
 			this.$watch('gradientPath', () => {
 				let image = new Image();
 				image.onload = () => {
@@ -153,6 +231,7 @@
 			this.$watch('points', this.updateFilteredPoints.bind(this));
 
 			this.$watch('filteredPoints', () => {
+				// update the heatmap with the new points
 				this.heatmap.clear();
 				this.heatmap.addPoints(this.filteredPoints);
 

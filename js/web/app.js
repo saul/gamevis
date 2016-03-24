@@ -1,3 +1,9 @@
+/**
+ * Root module.
+ * Registers all Vue.js components and initialises Bootstrap and other dependencies.
+ *
+ * @module web/app
+ */
 (function () {
   "use strict";
 
@@ -53,5 +59,13 @@
 
   Vue.component('iconpicker', require('components/Iconpicker.vue'));
 
+  /**
+   * Singleton instance of the `App` component.
+   * Accessible via `window.app`.
+   *
+   * @global
+   * @type {module:components/App}
+   * @name window.app
+   */
   window.app = new Vue(require('components/App.vue'));
 })();

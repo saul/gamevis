@@ -48,16 +48,63 @@
 </template>
 
 <script type="text/babel">
+	/**
+	 * Component for rendering continuous (connected line) visualisations.
+	 * @module components/VisualisationTab
+	 *
+	 * @listens render
+	 * @listens postrender
+	 *
+	 * @param {string} title - Two way. Tab title
+	 */
+
+	/**
+	 * Per-frame event for updating internal state before render.
+	 *
+	 * @event updateFrame
+	 * @global
+	 * @type {object}
+	 * @property {OverviewData} overviewData - Overview data for this level
+	 */
+
+	/**
+	 *
+	 * @event visualise
+	 * @global
+	 * @type {object}
+	 * @property {OverviewData} overviewData - Overview data for this level
+	 */
+
+	/**
+	 * @typedef {object} OverviewData
+	 * @global
+	 * @property {number} pos_x - World-space X position of the top-left corner of the overview
+	 * @property {number} pos_y - World-space Y position of the top-left corner of the overview
+	 * @property {number} scale - Scale of the overview, e.g., 4 means 1 pixel of the overview equals 1 world-space unit.
+	 */
+
 	const db = window.db;
 	const THREE = window.require('three');
 	const fs = window.require('fs');
 	const dialog = remote.require('dialog');
 	const OverviewMesh = require('js/web/overview-mesh.js');
 
+	/**
+	 * Convert tick to milliseconds
+	 * @param {number} tick
+	 * @param {number} tickRate - ticks per second
+	 * @returns {number} milliseconds
+	 */
 	function tickToMsecs(tick, tickRate) {
 		return tick * 1000 / tickRate;
 	}
 
+	/**
+	 * Convert milliseconds to tick count
+	 * @param msecs
+	 * @param tickRate - ticks per second
+	 * @returns {number} ticks
+	 */
 	function msecsToTick(msecs, tickRate) {
 		return msecs * tickRate / 1000;
 	}
@@ -92,6 +139,13 @@
 			}
 		},
 		methods: {
+			/**
+			 * Broadcasts {@link event:updateFrame} to all children.
+			 * @instance
+			 * @memberof module:components/VisualisationTab
+			 * @fires updateFrame
+			 * @param {event:render} e
+			 */
 			render(e) {
 				if (this.overviewData) {
 					this.$broadcast(
@@ -102,6 +156,12 @@
 					);
 				}
 			},
+
+			/**
+			 * Creates an overview quad and positions the camera.
+			 * @instance
+			 * @memberof module:components/VisualisationTab
+			 */
 			loadOverview() {
 				this.overviewData = window.require(`./overviews/${this.gameLevel.game}/${this.gameLevel.level}.json`);
 
@@ -124,6 +184,12 @@
 				this.camera.bottom = this.overviewData.pos_y - (1024 * this.overviewData.scale);
 				this.camera.updateProjectionMatrix();
 			},
+
+			/**
+			 * Adds items and groups to the timeline.
+			 * @instance
+			 * @memberof module:components/VisualisationTab
+			 */
 			visualiseTimeline() {
 				this.timeline.items = this.sessions.map((session, index) => {
 					return {
@@ -175,18 +241,23 @@
 					})
 					.catch(err => this.$dispatch('error', err));
 			},
+
+			/**
+			 * Called by UI when "Visualise" button is clicked to trigger visualisation components to run.
+			 * @instance
+			 * @memberof module:components/VisualisationTab
+			 * @fires visualise
+			 */
 			visualise() {
 				this.visualiseTimeline();
 				this.$broadcast('visualise', {overviewData: this.overviewData});
-
-				this.$refs.timeline.$on('moving', (item, cb) => {
-					item.session.tickRange = [
-						msecsToTick(item.start, item.session.record.tickrate),
-						msecsToTick(item.end, item.session.record.tickrate)
-					];
-					cb(item);
-				});
 			},
+
+			/**
+			 * Store a snapshot at the next {@link event:postrender}
+			 * @instance
+			 * @memberof module:components/VisualisationTab
+			 */
 			save() {
 				this.saveFrame = true;
 			}
@@ -196,6 +267,7 @@
 
 			this.$refs.renderer.$on('render', this.render.bind(this));
 
+			// we need to save on `postrender` otherwise the buffer is black
 			this.$refs.renderer.$on('postrender', () => {
 				if (!this.saveFrame) {
 					return;
@@ -215,9 +287,20 @@
 						return;
 					}
 
+					// data is a data URI (base64 encoded)
 					let b64 = data.replace(/^data:image\/png;base64,/, '');
 					fs.writeFileSync(filename, b64, 'base64');
 				});
+			});
+
+			this.$refs.timeline.$on('moving', (item, cb) => {
+				// update the tick range for this session
+				item.session.tickRange = [
+					msecsToTick(item.start, item.session.record.tickrate),
+					msecsToTick(item.end, item.session.record.tickrate)
+				];
+
+				cb(item);
 			});
 		}
 	}
