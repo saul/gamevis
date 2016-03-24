@@ -75,7 +75,7 @@ function importDemoBuffer(client, buffer, session_id, callback) {
   /**
    * Write an array of values to a stream as TSV
    * @param {Writable} stream
-   * @param {any[]} values
+   * @param {Array.<*>} values
    */
   function writeRow(stream, values) {
     var row = values.map(val => {

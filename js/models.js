@@ -53,7 +53,7 @@ var Event = db.define('event', {
  * @property {number} index
  * @property {number} tick
  * @property {string} prop
- * @property {{value: any}} value
+ * @property {{value: *}} value
  */
 var EntityProp = db.define('entity_prop', {
   index: {type: Sequelize.INTEGER, allowNull: false},

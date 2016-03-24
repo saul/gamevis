@@ -1,12 +1,25 @@
 {
-  "plugins": ["node_modules/jsdoc-vue"],
+  "tags": {
+    "dictionaries": ["jsdoc"]
+  },
+  "plugins": [
+    "node_modules/jsdoc-vue",
+    "plugins/markdown"
+  ],
   "source": {
-    "exclude": ["node_modules", "bower_components", "dist"],
+    "exclude": ["node_modules", "bower_components", "dist", "docs"],
     "includePattern": ".+\\.(vue|js)$"
+  },
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": true
   },
   "opts": {
     "destination": "./docs/",
+    "encoding": "utf8",
+    "private": true,
     "recurse": true,
-    "readme": "./README.md"
+    "readme": "./README.md",
+    "template": "./node_modules/docdash"
   }
 }

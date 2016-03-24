@@ -91,7 +91,7 @@
 
 	/**
 	 * Convert tick to milliseconds
-	 * @param {number} tick
+	 * @param {number} tick - number of ticks
 	 * @param {number} tickRate - ticks per second
 	 * @returns {number} milliseconds
 	 */
@@ -101,8 +101,8 @@
 
 	/**
 	 * Convert milliseconds to tick count
-	 * @param msecs
-	 * @param tickRate - ticks per second
+	 * @param {number} msecs - time in milliseconds
+	 * @param {number} tickRate - ticks per second
 	 * @returns {number} ticks
 	 */
 	function msecsToTick(msecs, tickRate) {
