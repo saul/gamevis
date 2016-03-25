@@ -55,11 +55,13 @@
     "pace": "0.0.4",
     "pg": "^4.4.3",
     "pg-copy-streams": "^0.3.0",
-    "pg-native": "^1.10.0",
     "sequelize": "^3.17.3",
     "stats.js": "^1.0.0",
     "three": "^0.74.0",
     "vue": "^1.0.16",
     "xxhash": "^0.2.3"
+  },
+  "optionalDependencies": {
+    "pg-native": "^1.10.0"
   }
 }

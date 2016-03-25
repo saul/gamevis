@@ -1,12 +1,22 @@
+'use strict';
+
 var Sequelize = require('sequelize');
 const config = require('../config.json');
 
-module.exports = new Sequelize(config.connectionString, {
+let options = {
   maxConcurrentQueries: 100,
-  native: true,
+  native: false,
   define: {
     timestamps: false,
     underscored: true
   },
   pool: {maxConnections: 10, maxIdleTime: 30}
-});
+};
+
+try {
+  options.native = !!require('pg-native');
+} catch (err) {
+  // if pg-native can't be found, use the non-native version
+}
+
+module.exports = new Sequelize(config.connectionString, options);
