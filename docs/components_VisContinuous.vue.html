@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>components/VisContinuous.vue - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FACache.html">FACache</a><ul class='methods'><li data-type='method'><a href="FACache.html#get">get</a></li></ul></li><li><a href="OverviewMesh.html">OverviewMesh</a></li></ul><h3>Modules</h3><ul><li><a href="module-components_Alerts.html">components/Alerts</a><ul class='methods'><li data-type='method'><a href="module-components_Alerts.html#dismiss">dismiss</a></li><li data-type='method'><a href="module-components_Alerts.html#error">error</a></li></ul></li><li><a href="module-components_App.html">components/App</a><ul class='methods'><li data-type='method'><a href="module-components_App.html#addTab">addTab</a></li><li data-type='method'><a href="module-components_App.html#closeTab">closeTab</a></li><li data-type='method'><a href="module-components_App.html#command">command</a></li><li data-type='method'><a href="module-components_App.html#error">error</a></li><li data-type='method'><a href="module-components_App.html#keyDown">keyDown</a></li><li data-type='method'><a href="module-components_App.html#switchTab">switchTab</a></li></ul></li><li><a href="module-components_EventFilter.html">components/EventFilter</a><ul class='methods'><li data-type='method'><a href="module-components_EventFilter.html#refreshProps">refreshProps</a></li><li data-type='method'><a href="module-components_EventFilter.html#sql">sql</a></li></ul></li><li><a href="module-components_EventFilterList.html">components/EventFilterList</a><ul class='methods'><li data-type='method'><a href="module-components_EventFilterList.html#add">add</a></li><li data-type='method'><a href="module-components_EventFilterList.html#remove">remove</a></li><li data-type='method'><a href="module-components_EventFilterList.html#sql">sql</a></li></ul></li><li><a href="module-components_EventList.html">components/EventList</a><ul class='methods'><li data-type='method'><a href="module-components_EventList.html#addEvent">addEvent</a></li><li data-type='method'><a href="module-components_EventList.html#moveDown">moveDown</a></li><li data-type='method'><a href="module-components_EventList.html#moveUp">moveUp</a></li><li data-type='method'><a href="module-components_EventList.html#removeEvent">removeEvent</a></li><li data-type='method'><a href="module-components_EventList.html#renderOrdered">renderOrdered</a></li><li data-type='method'><a href="module-components_EventList.html#toggle">toggle</a></li></ul></li><li><a href="module-components_GameLevelSelect.html">components/GameLevelSelect</a><ul class='methods'><li data-type='method'><a href="module-components_GameLevelSelect.html#refresh">refresh</a></li></ul></li><li><a href="module-components_Heatmap.html">components/Heatmap</a></li><li><a href="module-components_HeatmapGradientSelect.html">components/HeatmapGradientSelect</a></li><li><a href="module-components_Iconpicker.html">components/Iconpicker</a></li><li><a href="module-components_RadioList.html">components/RadioList</a></li><li><a href="module-components_SessionSelect.html">components/SessionSelect</a><ul class='methods'><li data-type='method'><a href="module-components_SessionSelect.html#add">add</a></li><li data-type='method'><a href="module-components_SessionSelect.html#refresh">refresh</a></li><li data-type='method'><a href="module-components_SessionSelect.html#remove">remove</a></li><li data-type='method'><a href="module-components_SessionSelect.html#sessionChange">sessionChange</a></li></ul></li><li><a href="module-components_Timeline.html">components/Timeline</a></li><li><a href="module-components_VisContinuous.html">components/VisContinuous</a><ul class='methods'><li data-type='method'><a href="module-components_VisContinuous.html#clear">clear</a></li><li data-type='method'><a href="module-components_VisContinuous.html#updateAvailable">updateAvailable</a></li><li data-type='method'><a href="module-components_VisContinuous.html#updateFrame">updateFrame</a></li><li data-type='method'><a href="module-components_VisContinuous.html#updateScene">updateScene</a></li><li data-type='method'><a href="module-components_VisContinuous.html#visualise">visualise</a></li></ul></li><li><a href="module-components_VisDiscontinuous.html">components/VisDiscontinuous</a><ul class='methods'><li data-type='method'><a href="module-components_VisDiscontinuous.html#clear">clear</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#updateAvailable">updateAvailable</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#updateFrame">updateFrame</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#updateScene">updateScene</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#visualise">visualise</a></li></ul></li><li><a href="module-components_VisTimeline.html">components/VisTimeline</a></li><li><a href="module-components_VisualisationTab.html">components/VisualisationTab</a><ul class='methods'><li data-type='method'><a href="module-components_VisualisationTab.html#loadOverview">loadOverview</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#render">render</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#save">save</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#visualise">visualise</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#visualiseTimeline">visualiseTimeline</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#~msecsToTick">msecsToTick</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#~tickToMsecs">tickToMsecs</a></li></ul></li><li><a href="module-components_WebGLRenderer.html">components/WebGLRenderer</a><ul class='methods'><li data-type='method'><a href="module-components_WebGLRenderer.html#render">render</a></li><li data-type='method'><a href="module-components_WebGLRenderer.html#toDataURL">toDataURL</a></li></ul></li><li><a href="module-importers_csgo_import.html">importers/csgo/import</a><ul class='methods'><li data-type='method'><a href="module-importers_csgo_import.html#~importDemoBuffer">importDemoBuffer</a></li><li data-type='method'><a href="module-importers_csgo_import.html#~importDemoFile">importDemoFile</a></li></ul></li><li><a href="module-models.html">models</a></li><li><a href="module-web_app.html">web/app</a></li></ul><h3>Events</h3><ul><li><a href="global.html#event:error">error</a></li><li><a href="global.html#event:postrender">postrender</a></li><li><a href="global.html#event:render">render</a></li><li><a href="global.html#event:updateFrame">updateFrame</a></li><li><a href="global.html#event:visualise">visualise</a></li></ul><h3>Global</h3><ul><li><a href="global.html#app">app</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">components/VisContinuous.vue</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;template>
+	&lt;div class="checkbox">
+		&lt;label>
+			&lt;input type="checkbox" v-model="fadeOverTime"> Fade older points
+		&lt;/label>
+	&lt;/div>
+
+	&lt;div class="form-group">
+		&lt;label for="opacity" class="col-sm-4">Opacity&lt;/label>
+		&lt;div class="col-sm-8">
+			&lt;input type="text" class="form-control" id="opacity" v-model="opacity">
+		&lt;/div>
+	&lt;/div>
+
+	&lt;div v-if="event" v-show="event.locations.length > 1">
+		&lt;gv-radio-list label="Plot" :all="event.locations" :selected.sync="selectedLocation">&lt;/gv-radio-list>
+	&lt;/div>
+
+	&lt;div v-if="event" v-show="event.entities.length > 1">
+		&lt;gv-radio-list label="Group by" :all="event.entities" :selected.sync="groupByEntity">&lt;/gv-radio-list>
+	&lt;/div>
+
+	&lt;gv-event-filter-list v-ref:filters v-if="event" :event="event" :sessions="sessions">&lt;/gv-event-filter-list>
+&lt;/template>
+
+&lt;script type="text/babel">
+	/**
+	 * Component for rendering continuous (connected line) visualisations.
+	 * @module components/VisContinuous
+	 *
+	 * @param {GameEvent} event
+	 * @param {GameEvent[]} all - All game events for this session set
+	 * @param {GameEvent[]} available - Two way. Game events that can be visualised by this component
+	 * @param {Session[]} sessions
+	 * @param {ThreeScene} scene - Three.js scene
+	 * @param {number} renderOrder - Render order for scene objects (used for layering)
+	 * @param {boolean} visible - Visualisation visible
+	 */
+
+	const _ = window.require('lodash');
+	const color = window.require('./dist/components/color/one-color-all-debug');
+	const faCache = require('js/web/font-awesome-cache');
+	const THREE = window.require('three');
+	const fs = window.require('fs');
+
+	const TELEPORT_DISTANCE_SQ = Math.pow(256, 2);
+
+	export default {
+		replace: false,
+		props: {
+			event: {
+				required: true
+			},
+			all: {
+				required: true
+			},
+			available: {
+				required: true,
+				twoWay: true
+			},
+			sessions: {
+				required: true
+			},
+			scene: {
+				required: true
+			},
+			renderOrder: {
+				required: true
+			},
+			visible: {
+				required: true
+			},
+		},
+		data() {
+			return {
+				fadeOverTime: true,
+				selectedLocation: null,
+				groupByEntity: null,
+				locations: [],
+				points: [],
+				sceneObjects: [],
+				sessionMaterials: [],
+				opacity: 1
+			}
+		},
+		methods: {
+			/**
+			 * Updates `this.available` with events that have a location
+			 * @instance
+			 * @memberof module:components/VisContinuous
+			 */
+			updateAvailable() {
+				if (this.all) {
+					this.available = this.all.filter(e => e.locations.length > 0);
+				} else {
+					this.available = [];
+				}
+			},
+
+			/**
+			 * Remove all objects from the scene.
+			 * @instance
+			 * @memberof module:components/VisContinuous
+			 */
+			clear() {
+				this.sceneObjects.forEach(m => this.scene.remove(m));
+				this.sceneObjects = [];
+				this.sessionMaterials = [];
+			},
+
+			/**
+			 * Recreate the scene based on `this.points`
+			 * @instance
+			 * @memberof module:components/VisContinuous
+			 */
+			updateScene() {
+				this.clear();
+
+				for (let i = 0; i &lt; this.points.length; ++i) {
+					let [session, entityPoints] = this.points[i];
+
+					let material = new THREE.ShaderMaterial({
+						uniforms: {
+							useTexture: {type: 'i', value: 0},
+							colour: {type: 'c', value: new THREE.Color()},
+							minTick: {type: 'f', value: 0},
+							maxTick: {type: 'f', value: 1},
+							fadeOld: {type: 'i', value: 0},
+							opacityScalar: {type: 'f', value: 1},
+						},
+						vertexShader: fs.readFileSync('shaders/OverviewPoint.vert', 'utf8'),
+						fragmentShader: fs.readFileSync('shaders/OverviewPoint.frag', 'utf8'),
+						linewidth: 2,
+						depthTest: false,
+						transparent: true
+					});
+
+					// keep track of this session material
+					this.sessionMaterials.push({session, material});
+
+					for (let j = 0; j &lt; entityPoints.length; ++j) {
+						let [entity, points] = entityPoints[j];
+
+						let vertices = [];
+						let ticks = [];
+
+						for (let k = 1; k &lt; points.length; ++k) {
+							let lastPoint = points[k - 1];
+							let point = points[k];
+
+							let lastPos = lastPoint.position;
+							let pos = point.position;
+
+							// connect the points if they haven't teleported
+							if (Math.pow(lastPos.x - pos.x, 2) + Math.pow(lastPos.y - pos.y, 2) + Math.pow(lastPos.z - pos.z, 2) &lt; TELEPORT_DISTANCE_SQ) {
+								vertices.push(lastPos.x, lastPos.y, lastPos.z);
+								ticks.push(lastPoint.tick);
+
+								vertices.push(pos.x, pos.y, pos.z);
+								ticks.push(point.tick);
+							}
+						}
+
+						// create buffered geometry
+						let geometry = new THREE.BufferGeometry();
+						geometry.addAttribute('position', new THREE.BufferAttribute(Float32Array.from(vertices), 3));
+						geometry.addAttribute('tick', new THREE.BufferAttribute(Float32Array.from(ticks), 1));
+
+						// create line segment object
+						let line = new THREE.LineSegments(geometry, material);
+						line.renderOrder = this.renderOrder;
+						line.visible = this.visible;
+
+						this.scene.add(line);
+						this.sceneObjects.push(line);
+					}
+				}
+			}
+		},
+		events: {
+			/**
+			 * @instance
+			 * @memberof module:components/VisContinuous
+			 * @listens updateFrame
+			 */
+			updateFrame() {
+				for (let i = 0; i &lt; this.sessionMaterials.length; ++i) {
+					let material = this.sessionMaterials[i].material;
+					let session = this.sessionMaterials[i].session;
+
+					let [min, max] = session.tickRange;
+					material.uniforms.minTick.value = min;
+					material.uniforms.maxTick.value = max;
+
+					material.uniforms.colour.value.setStyle(session.colour);
+					material.uniforms.fadeOld.value = this.fadeOverTime ? 1 : 0;
+
+					material.uniforms.opacityScalar.value = this.opacity;
+				}
+			},
+
+			/**
+			 * @instance
+			 * @memberof module:components/VisContinuous
+			 * @listens visualise
+			 */
+			visualise() {
+				let queryString = `SELECT tick, session_id, (events.entities ->> :entity) AS entity, (events.locations ->> :location) AS position
+          FROM events
+          WHERE events.name = :event
+          AND events.session_id IN (:sessionIds)
+          AND events.locations ? :location
+          AND events.entities ? :entity
+          ${this.$refs.filters.sql()}
+          ORDER BY events.tick`;
+
+				console.time(`${this.event.name} continuous query`);
+
+				return db.query(queryString, {
+						type: db.QueryTypes.SELECT,
+						replacements: {
+							event: this.event.name,
+							sessionIds: this.sessions.map(s => s.record.id),
+							location: this.selectedLocation,
+							entity: this.groupByEntity
+						}
+					})
+					.then(results => {
+						console.timeEnd(`${this.event.name} continuous query`);
+
+						let pointsBySession = _.chain(results.map(row => {
+								return {
+									tick: row.tick,
+									entity: row.entity,
+									position: JSON.parse(row.position),
+									sessionIndex: this.sessions.findIndex(s => s.record.id == row.session_id)
+								}
+							}))
+							.groupBy('sessionIndex')
+							.pairs()
+							.value();
+
+						this.points = pointsBySession.map(([sessionIndex, points]) => {
+							return [this.sessions[sessionIndex], _.pairs(_.groupBy(points, 'entity'))];
+						});
+
+						this.updateScene();
+					})
+					.catch(err => this.$dispatch('error', err));
+			}
+		},
+		ready() {
+			this.$watch('all', this.updateAvailable.bind(this));
+			this.updateAvailable();
+
+			this.$watch('renderOrder', () => {
+				this.sceneObjects.forEach(o => {
+					o.renderOrder = this.renderOrder;
+				});
+			});
+
+			this.$watch('visible', () => {
+				this.sceneObjects.forEach(o => {
+					o.visible = this.visible;
+				});
+			});
+		},
+		detached() {
+			this.clear();
+		}
+	}
+&lt;/script>
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Mar 29 2016 10:03:12 GMT+0100 (BST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

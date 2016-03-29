@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>components/Heatmap - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FACache.html">FACache</a><ul class='methods'><li data-type='method'><a href="FACache.html#get">get</a></li></ul></li><li><a href="OverviewMesh.html">OverviewMesh</a></li></ul><h3>Modules</h3><ul><li><a href="module-components_Alerts.html">components/Alerts</a><ul class='methods'><li data-type='method'><a href="module-components_Alerts.html#dismiss">dismiss</a></li><li data-type='method'><a href="module-components_Alerts.html#error">error</a></li></ul></li><li><a href="module-components_App.html">components/App</a><ul class='methods'><li data-type='method'><a href="module-components_App.html#addTab">addTab</a></li><li data-type='method'><a href="module-components_App.html#closeTab">closeTab</a></li><li data-type='method'><a href="module-components_App.html#command">command</a></li><li data-type='method'><a href="module-components_App.html#error">error</a></li><li data-type='method'><a href="module-components_App.html#keyDown">keyDown</a></li><li data-type='method'><a href="module-components_App.html#switchTab">switchTab</a></li></ul></li><li><a href="module-components_EventFilter.html">components/EventFilter</a><ul class='methods'><li data-type='method'><a href="module-components_EventFilter.html#refreshProps">refreshProps</a></li><li data-type='method'><a href="module-components_EventFilter.html#sql">sql</a></li></ul></li><li><a href="module-components_EventFilterList.html">components/EventFilterList</a><ul class='methods'><li data-type='method'><a href="module-components_EventFilterList.html#add">add</a></li><li data-type='method'><a href="module-components_EventFilterList.html#remove">remove</a></li><li data-type='method'><a href="module-components_EventFilterList.html#sql">sql</a></li></ul></li><li><a href="module-components_EventList.html">components/EventList</a><ul class='methods'><li data-type='method'><a href="module-components_EventList.html#addEvent">addEvent</a></li><li data-type='method'><a href="module-components_EventList.html#moveDown">moveDown</a></li><li data-type='method'><a href="module-components_EventList.html#moveUp">moveUp</a></li><li data-type='method'><a href="module-components_EventList.html#removeEvent">removeEvent</a></li><li data-type='method'><a href="module-components_EventList.html#renderOrdered">renderOrdered</a></li><li data-type='method'><a href="module-components_EventList.html#toggle">toggle</a></li></ul></li><li><a href="module-components_GameLevelSelect.html">components/GameLevelSelect</a><ul class='methods'><li data-type='method'><a href="module-components_GameLevelSelect.html#refresh">refresh</a></li></ul></li><li><a href="module-components_Heatmap.html">components/Heatmap</a></li><li><a href="module-components_HeatmapGradientSelect.html">components/HeatmapGradientSelect</a></li><li><a href="module-components_Iconpicker.html">components/Iconpicker</a></li><li><a href="module-components_RadioList.html">components/RadioList</a></li><li><a href="module-components_SessionSelect.html">components/SessionSelect</a><ul class='methods'><li data-type='method'><a href="module-components_SessionSelect.html#add">add</a></li><li data-type='method'><a href="module-components_SessionSelect.html#refresh">refresh</a></li><li data-type='method'><a href="module-components_SessionSelect.html#remove">remove</a></li><li data-type='method'><a href="module-components_SessionSelect.html#sessionChange">sessionChange</a></li></ul></li><li><a href="module-components_Timeline.html">components/Timeline</a></li><li><a href="module-components_VisContinuous.html">components/VisContinuous</a><ul class='methods'><li data-type='method'><a href="module-components_VisContinuous.html#clear">clear</a></li><li data-type='method'><a href="module-components_VisContinuous.html#updateAvailable">updateAvailable</a></li><li data-type='method'><a href="module-components_VisContinuous.html#updateFrame">updateFrame</a></li><li data-type='method'><a href="module-components_VisContinuous.html#updateScene">updateScene</a></li><li data-type='method'><a href="module-components_VisContinuous.html#visualise">visualise</a></li></ul></li><li><a href="module-components_VisDiscontinuous.html">components/VisDiscontinuous</a><ul class='methods'><li data-type='method'><a href="module-components_VisDiscontinuous.html#clear">clear</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#updateAvailable">updateAvailable</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#updateFrame">updateFrame</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#updateScene">updateScene</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#visualise">visualise</a></li></ul></li><li><a href="module-components_VisTimeline.html">components/VisTimeline</a></li><li><a href="module-components_VisualisationTab.html">components/VisualisationTab</a><ul class='methods'><li data-type='method'><a href="module-components_VisualisationTab.html#loadOverview">loadOverview</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#render">render</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#save">save</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#visualise">visualise</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#visualiseTimeline">visualiseTimeline</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#~msecsToTick">msecsToTick</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#~tickToMsecs">tickToMsecs</a></li></ul></li><li><a href="module-components_WebGLRenderer.html">components/WebGLRenderer</a><ul class='methods'><li data-type='method'><a href="module-components_WebGLRenderer.html#render">render</a></li><li data-type='method'><a href="module-components_WebGLRenderer.html#toDataURL">toDataURL</a></li></ul></li><li><a href="module-importers_csgo_import.html">importers/csgo/import</a><ul class='methods'><li data-type='method'><a href="module-importers_csgo_import.html#~importDemoBuffer">importDemoBuffer</a></li><li data-type='method'><a href="module-importers_csgo_import.html#~importDemoFile">importDemoFile</a></li></ul></li><li><a href="module-models.html">models</a></li><li><a href="module-web_app.html">web/app</a></li></ul><h3>Events</h3><ul><li><a href="global.html#event:error">error</a></li><li><a href="global.html#event:postrender">postrender</a></li><li><a href="global.html#event:render">render</a></li><li><a href="global.html#event:updateFrame">updateFrame</a></li><li><a href="global.html#event:visualise">visualise</a></li></ul><h3>Global</h3><ul><li><a href="global.html#app">app</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">components/Heatmap</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        
+            
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Component for rendering heatmap visualisations.</p></div>
+        
+
+        
+            
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_VisHeatmap.vue.html">components/VisHeatmap.vue</a>, <a href="components_VisHeatmap.vue.html#line2">line 2</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#GameEvent">GameEvent</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>all</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#GameEvent">GameEvent</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>All game events for this session set</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>available</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#GameEvent">GameEvent</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Two way. Game events that can be visualised by this component</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sessions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#Session">Session</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>scene</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ThreeScene</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Three.js scene</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>renderOrder</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Render order for scene objects (used for layering)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>visible</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Visualisation visible</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Mar 29 2016 10:03:12 GMT+0100 (BST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>components/VisualisationTab.vue - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FACache.html">FACache</a><ul class='methods'><li data-type='method'><a href="FACache.html#get">get</a></li></ul></li><li><a href="OverviewMesh.html">OverviewMesh</a></li></ul><h3>Modules</h3><ul><li><a href="module-components_Alerts.html">components/Alerts</a><ul class='methods'><li data-type='method'><a href="module-components_Alerts.html#dismiss">dismiss</a></li><li data-type='method'><a href="module-components_Alerts.html#error">error</a></li></ul></li><li><a href="module-components_App.html">components/App</a><ul class='methods'><li data-type='method'><a href="module-components_App.html#addTab">addTab</a></li><li data-type='method'><a href="module-components_App.html#closeTab">closeTab</a></li><li data-type='method'><a href="module-components_App.html#command">command</a></li><li data-type='method'><a href="module-components_App.html#error">error</a></li><li data-type='method'><a href="module-components_App.html#keyDown">keyDown</a></li><li data-type='method'><a href="module-components_App.html#switchTab">switchTab</a></li></ul></li><li><a href="module-components_EventFilter.html">components/EventFilter</a><ul class='methods'><li data-type='method'><a href="module-components_EventFilter.html#refreshProps">refreshProps</a></li><li data-type='method'><a href="module-components_EventFilter.html#sql">sql</a></li></ul></li><li><a href="module-components_EventFilterList.html">components/EventFilterList</a><ul class='methods'><li data-type='method'><a href="module-components_EventFilterList.html#add">add</a></li><li data-type='method'><a href="module-components_EventFilterList.html#remove">remove</a></li><li data-type='method'><a href="module-components_EventFilterList.html#sql">sql</a></li></ul></li><li><a href="module-components_EventList.html">components/EventList</a><ul class='methods'><li data-type='method'><a href="module-components_EventList.html#addEvent">addEvent</a></li><li data-type='method'><a href="module-components_EventList.html#moveDown">moveDown</a></li><li data-type='method'><a href="module-components_EventList.html#moveUp">moveUp</a></li><li data-type='method'><a href="module-components_EventList.html#removeEvent">removeEvent</a></li><li data-type='method'><a href="module-components_EventList.html#renderOrdered">renderOrdered</a></li><li data-type='method'><a href="module-components_EventList.html#toggle">toggle</a></li></ul></li><li><a href="module-components_GameLevelSelect.html">components/GameLevelSelect</a><ul class='methods'><li data-type='method'><a href="module-components_GameLevelSelect.html#refresh">refresh</a></li></ul></li><li><a href="module-components_Heatmap.html">components/Heatmap</a></li><li><a href="module-components_HeatmapGradientSelect.html">components/HeatmapGradientSelect</a></li><li><a href="module-components_Iconpicker.html">components/Iconpicker</a></li><li><a href="module-components_RadioList.html">components/RadioList</a></li><li><a href="module-components_SessionSelect.html">components/SessionSelect</a><ul class='methods'><li data-type='method'><a href="module-components_SessionSelect.html#add">add</a></li><li data-type='method'><a href="module-components_SessionSelect.html#refresh">refresh</a></li><li data-type='method'><a href="module-components_SessionSelect.html#remove">remove</a></li><li data-type='method'><a href="module-components_SessionSelect.html#sessionChange">sessionChange</a></li></ul></li><li><a href="module-components_Timeline.html">components/Timeline</a></li><li><a href="module-components_VisContinuous.html">components/VisContinuous</a><ul class='methods'><li data-type='method'><a href="module-components_VisContinuous.html#clear">clear</a></li><li data-type='method'><a href="module-components_VisContinuous.html#updateAvailable">updateAvailable</a></li><li data-type='method'><a href="module-components_VisContinuous.html#updateFrame">updateFrame</a></li><li data-type='method'><a href="module-components_VisContinuous.html#updateScene">updateScene</a></li><li data-type='method'><a href="module-components_VisContinuous.html#visualise">visualise</a></li></ul></li><li><a href="module-components_VisDiscontinuous.html">components/VisDiscontinuous</a><ul class='methods'><li data-type='method'><a href="module-components_VisDiscontinuous.html#clear">clear</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#updateAvailable">updateAvailable</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#updateFrame">updateFrame</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#updateScene">updateScene</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#visualise">visualise</a></li></ul></li><li><a href="module-components_VisTimeline.html">components/VisTimeline</a></li><li><a href="module-components_VisualisationTab.html">components/VisualisationTab</a><ul class='methods'><li data-type='method'><a href="module-components_VisualisationTab.html#loadOverview">loadOverview</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#render">render</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#save">save</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#visualise">visualise</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#visualiseTimeline">visualiseTimeline</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#~msecsToTick">msecsToTick</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#~tickToMsecs">tickToMsecs</a></li></ul></li><li><a href="module-components_WebGLRenderer.html">components/WebGLRenderer</a><ul class='methods'><li data-type='method'><a href="module-components_WebGLRenderer.html#render">render</a></li><li data-type='method'><a href="module-components_WebGLRenderer.html#toDataURL">toDataURL</a></li></ul></li><li><a href="module-importers_csgo_import.html">importers/csgo/import</a><ul class='methods'><li data-type='method'><a href="module-importers_csgo_import.html#~importDemoBuffer">importDemoBuffer</a></li><li data-type='method'><a href="module-importers_csgo_import.html#~importDemoFile">importDemoFile</a></li></ul></li><li><a href="module-models.html">models</a></li><li><a href="module-web_app.html">web/app</a></li></ul><h3>Events</h3><ul><li><a href="global.html#event:error">error</a></li><li><a href="global.html#event:postrender">postrender</a></li><li><a href="global.html#event:render">render</a></li><li><a href="global.html#event:updateFrame">updateFrame</a></li><li><a href="global.html#event:visualise">visualise</a></li></ul><h3>Global</h3><ul><li><a href="global.html#app">app</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">components/VisualisationTab.vue</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;template>
+	&lt;div class="row app-row__main">
+		&lt;div class="col-xs-4 main-panel__sidebar">
+			&lt;form class="form-horizontal">
+				&lt;div class="form-group">
+					&lt;label class="col-sm-4">Title&lt;/label>
+					&lt;div class="col-sm-8">
+						&lt;input type="text" class="form-control" v-model="title">
+					&lt;/div>
+				&lt;/div>
+
+				&lt;div class="form-group">
+					&lt;label class="col-sm-4">Game/Level&lt;/label>
+					&lt;div class="col-sm-8">
+						&lt;gv-game-level-select class="col-sm-8" :selected.sync="gameLevel">&lt;/gv-game-level-select>
+					&lt;/div>
+				&lt;/div>
+
+				&lt;div class="form-group">
+					&lt;label class="col-sm-12">Sessions&lt;/label>
+
+					&lt;div class="col-sm-12">
+						&lt;gv-session-select :selected.sync="sessions" :game-level="gameLevel" :events.sync="allEvents">&lt;/gv-session-select>
+					&lt;/div>
+				&lt;/div>
+
+				&lt;label>Events&lt;/label>
+				&lt;gv-event-list :all="allEvents" :selected.sync="events" :sessions="sessions" :scene="scene">&lt;/gv-event-list>
+
+				&lt;div class="form-group-flex">
+					&lt;button type="submit" class="btn btn-primary btn-lg btn-block" @click.prevent="visualise" :disabled="!readyToVisualise">
+						&lt;span class="glyphicon glyphicon-eye-open">&lt;/span>
+						Visualise
+					&lt;/button>
+
+					&lt;button type="button" class="btn btn-default btn-lg" @click="save">
+						&lt;span class="glyphicon glyphicon-floppy-save">&lt;/span>
+					&lt;/button>
+				&lt;/div>
+			&lt;/form>
+		&lt;/div>
+
+		&lt;div class="col-xs-8">
+			&lt;gv-timeline v-ref:timeline :items="timeline.items" :groups="timeline.groups">&lt;/gv-timeline>
+			&lt;gv-webgl-renderer v-ref:renderer :scene.sync="scene" :camera.sync="camera">&lt;/gv-webgl-renderer>
+		&lt;/div>
+	&lt;/div>
+&lt;/template>
+
+&lt;script type="text/babel">
+	/**
+	 * Component for rendering continuous (connected line) visualisations.
+	 * @module components/VisualisationTab
+	 *
+	 * @listens render
+	 * @listens postrender
+	 *
+	 * @param {string} title - Two way. Tab title
+	 */
+
+	/**
+	 * Per-frame event for updating internal state before render.
+	 *
+	 * @event updateFrame
+	 * @global
+	 * @type {object}
+	 * @property {OverviewData} overviewData - Overview data for this level
+	 */
+
+	/**
+	 *
+	 * @event visualise
+	 * @global
+	 * @type {object}
+	 * @property {OverviewData} overviewData - Overview data for this level
+	 */
+
+	/**
+	 * @typedef {object} OverviewData
+	 * @global
+	 * @property {number} pos_x - World-space X position of the top-left corner of the overview
+	 * @property {number} pos_y - World-space Y position of the top-left corner of the overview
+	 * @property {number} scale - Scale of the overview, e.g., 4 means 1 pixel of the overview equals 1 world-space unit.
+	 */
+
+	const db = window.db;
+	const THREE = window.require('three');
+	const fs = window.require('fs');
+	const dialog = remote.require('dialog');
+	const OverviewMesh = require('js/web/overview-mesh.js');
+
+	/**
+	 * Convert tick to milliseconds
+	 * @param {number} tick - number of ticks
+	 * @param {number} tickRate - ticks per second
+	 * @returns {number} milliseconds
+	 */
+	function tickToMsecs(tick, tickRate) {
+		return tick * 1000 / tickRate;
+	}
+
+	/**
+	 * Convert milliseconds to tick count
+	 * @param {number} msecs - time in milliseconds
+	 * @param {number} tickRate - ticks per second
+	 * @returns {number} ticks
+	 */
+	function msecsToTick(msecs, tickRate) {
+		return msecs * tickRate / 1000;
+	}
+
+	export default {
+		replace: false,
+		props: {
+			title: {
+				required: true,
+				twoWay: true
+			}
+		},
+		data() {
+			return {
+				gameLevel: null,
+				sessions: [],
+				allEvents: [],
+				events: [],
+				overviewMesh: null,
+				scene: null,
+				camera: null,
+				saveFrame: false,
+				timeline: {
+					items: [],
+					groups: []
+				}
+			}
+		},
+		computed: {
+			readyToVisualise() {
+				return this.sessions.length > 0 &amp;&amp; this.allEvents.length > 0 &amp;&amp; this.events.length > 0;
+			}
+		},
+		methods: {
+			/**
+			 * Broadcasts {@link event:updateFrame} to all children.
+			 * @instance
+			 * @memberof module:components/VisualisationTab
+			 * @fires updateFrame
+			 * @param {event:render} e
+			 */
+			render(e) {
+				if (this.overviewData) {
+					this.$broadcast(
+						'updateFrame',
+						Object.assign({}, e, {
+							overviewData: this.overviewData
+						})
+					);
+				}
+			},
+
+			/**
+			 * Creates an overview quad and positions the camera.
+			 * @instance
+			 * @memberof module:components/VisualisationTab
+			 */
+			loadOverview() {
+				this.overviewData = window.require(`./overviews/${this.gameLevel.game}/${this.gameLevel.level}.json`);
+
+				// remove the existing mesh
+				if (this.overviewMesh) {
+					this.scene.remove(this.overviewMesh);
+				}
+
+				let loader = new THREE.TextureLoader();
+
+				let overviewTexture = loader.load(`overviews/${this.gameLevel.game}/${this.gameLevel.level}.png`);
+				let material = new THREE.MeshBasicMaterial({map: overviewTexture, depthWrite: false});
+
+				this.overviewMesh = new OverviewMesh(this.overviewData, material);
+				this.scene.add(this.overviewMesh);
+
+				this.camera.left = this.overviewData.pos_x;
+				this.camera.top = this.overviewData.pos_y;
+				this.camera.right = this.overviewData.pos_x + (1024 * this.overviewData.scale);
+				this.camera.bottom = this.overviewData.pos_y - (1024 * this.overviewData.scale);
+				this.camera.updateProjectionMatrix();
+			},
+
+			/**
+			 * Adds items and groups to the timeline.
+			 * @instance
+			 * @memberof module:components/VisualisationTab
+			 */
+			visualiseTimeline() {
+				this.timeline.items = this.sessions.map((session, index) => {
+					return {
+						session,
+						id: -index,
+						content: 'Time range',
+						group: session.record.id,
+						start: tickToMsecs(session.tickRange[0], session.record.tickrate),
+						end: tickToMsecs(session.tickRange[1], session.record.tickrate)
+					}
+				});
+
+				this.timeline.groups = this.sessions.map(session => {
+					return {
+						id: session.record.id,
+						content: session.record.title,
+						style: `background-color: ${session.colour}`
+					}
+				});
+
+				let eventNames = this.events.filter(e => e.type.name == 'timeline').map(e => e.record.name);
+
+				// if there are no events to visualise, nothing to query
+				if (eventNames.length === 0) {
+					return;
+				}
+
+				let queryString = `SELECT * FROM events WHERE events.name IN (:eventNames) AND events.session_id IN (:sessionIds)`;
+
+				db.query(queryString, {
+						type: db.QueryTypes.SELECT,
+						replacements: {
+							eventNames,
+							sessionIds: this.sessions.map(s => s.record.id),
+						}
+					})
+					.then(results => {
+						this.timeline.items = this.timeline.items.concat(results.map(row => {
+							let session = this.sessions.find(s => s.record.id == row.session_id)
+
+							return {
+								id: row.id,
+								content: row.name,
+								group: row.session_id,
+								editable: false,
+								start: tickToMsecs(row.tick, session.record.tickrate)
+							}
+						}));
+					})
+					.catch(err => this.$dispatch('error', err));
+			},
+
+			/**
+			 * Called by UI when "Visualise" button is clicked to trigger visualisation components to run.
+			 * @instance
+			 * @memberof module:components/VisualisationTab
+			 * @fires visualise
+			 */
+			visualise() {
+				this.visualiseTimeline();
+				this.$broadcast('visualise', {overviewData: this.overviewData});
+			},
+
+			/**
+			 * Store a snapshot at the next {@link event:postrender}
+			 * @instance
+			 * @memberof module:components/VisualisationTab
+			 */
+			save() {
+				this.saveFrame = true;
+			}
+		},
+		ready() {
+			this.$watch('gameLevel', this.loadOverview.bind(this));
+
+			this.$refs.renderer.$on('render', this.render.bind(this));
+
+			// we need to save on `postrender` otherwise the buffer is black
+			this.$refs.renderer.$on('postrender', () => {
+				if (!this.saveFrame) {
+					return;
+				}
+
+				this.saveFrame = false;
+
+				let data = this.$refs.renderer.toDataURL('image/png');
+
+				dialog.showSaveDialog(remote.getCurrentWindow(), {
+					title: 'Save visualisation',
+					filters: [
+						{name: 'PNG', extensions: ['png']},
+					]
+				}, filename => {
+					if (!filename) {
+						return;
+					}
+
+					// data is a data URI (base64 encoded)
+					let b64 = data.replace(/^data:image\/png;base64,/, '');
+					fs.writeFileSync(filename, b64, 'base64');
+				});
+			});
+
+			this.$refs.timeline.$on('moving', (item, cb) => {
+				// update the tick range for this session
+				item.session.tickRange = [
+					msecsToTick(item.start, item.session.record.tickrate),
+					msecsToTick(item.end, item.session.record.tickrate)
+				];
+
+				cb(item);
+			});
+		}
+	}
+&lt;/script>
+
+&lt;style lang="less" rel="stylesheet/less">
+	@import "../less/variables.less";
+
+	.app-row__main {
+		display: flex;
+		min-height: 100vh;
+
+		> div {
+			padding: 1em;
+		}
+	}
+
+	.main-panel__sidebar {
+		background-color: @gray-lighter;
+		min-width: 400px;
+
+		hr {
+			border-top: solid 2px white;
+		}
+	}
+&lt;/style>
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Mar 29 2016 10:03:12 GMT+0100 (BST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

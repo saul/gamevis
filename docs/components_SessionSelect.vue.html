@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>components/SessionSelect.vue - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FACache.html">FACache</a><ul class='methods'><li data-type='method'><a href="FACache.html#get">get</a></li></ul></li><li><a href="OverviewMesh.html">OverviewMesh</a></li></ul><h3>Modules</h3><ul><li><a href="module-components_Alerts.html">components/Alerts</a><ul class='methods'><li data-type='method'><a href="module-components_Alerts.html#dismiss">dismiss</a></li><li data-type='method'><a href="module-components_Alerts.html#error">error</a></li></ul></li><li><a href="module-components_App.html">components/App</a><ul class='methods'><li data-type='method'><a href="module-components_App.html#addTab">addTab</a></li><li data-type='method'><a href="module-components_App.html#closeTab">closeTab</a></li><li data-type='method'><a href="module-components_App.html#command">command</a></li><li data-type='method'><a href="module-components_App.html#error">error</a></li><li data-type='method'><a href="module-components_App.html#keyDown">keyDown</a></li><li data-type='method'><a href="module-components_App.html#switchTab">switchTab</a></li></ul></li><li><a href="module-components_EventFilter.html">components/EventFilter</a><ul class='methods'><li data-type='method'><a href="module-components_EventFilter.html#refreshProps">refreshProps</a></li><li data-type='method'><a href="module-components_EventFilter.html#sql">sql</a></li></ul></li><li><a href="module-components_EventFilterList.html">components/EventFilterList</a><ul class='methods'><li data-type='method'><a href="module-components_EventFilterList.html#add">add</a></li><li data-type='method'><a href="module-components_EventFilterList.html#remove">remove</a></li><li data-type='method'><a href="module-components_EventFilterList.html#sql">sql</a></li></ul></li><li><a href="module-components_EventList.html">components/EventList</a><ul class='methods'><li data-type='method'><a href="module-components_EventList.html#addEvent">addEvent</a></li><li data-type='method'><a href="module-components_EventList.html#moveDown">moveDown</a></li><li data-type='method'><a href="module-components_EventList.html#moveUp">moveUp</a></li><li data-type='method'><a href="module-components_EventList.html#removeEvent">removeEvent</a></li><li data-type='method'><a href="module-components_EventList.html#renderOrdered">renderOrdered</a></li><li data-type='method'><a href="module-components_EventList.html#toggle">toggle</a></li></ul></li><li><a href="module-components_GameLevelSelect.html">components/GameLevelSelect</a><ul class='methods'><li data-type='method'><a href="module-components_GameLevelSelect.html#refresh">refresh</a></li></ul></li><li><a href="module-components_Heatmap.html">components/Heatmap</a></li><li><a href="module-components_HeatmapGradientSelect.html">components/HeatmapGradientSelect</a></li><li><a href="module-components_Iconpicker.html">components/Iconpicker</a></li><li><a href="module-components_RadioList.html">components/RadioList</a></li><li><a href="module-components_SessionSelect.html">components/SessionSelect</a><ul class='methods'><li data-type='method'><a href="module-components_SessionSelect.html#add">add</a></li><li data-type='method'><a href="module-components_SessionSelect.html#refresh">refresh</a></li><li data-type='method'><a href="module-components_SessionSelect.html#remove">remove</a></li><li data-type='method'><a href="module-components_SessionSelect.html#sessionChange">sessionChange</a></li></ul></li><li><a href="module-components_Timeline.html">components/Timeline</a></li><li><a href="module-components_VisContinuous.html">components/VisContinuous</a><ul class='methods'><li data-type='method'><a href="module-components_VisContinuous.html#clear">clear</a></li><li data-type='method'><a href="module-components_VisContinuous.html#updateAvailable">updateAvailable</a></li><li data-type='method'><a href="module-components_VisContinuous.html#updateFrame">updateFrame</a></li><li data-type='method'><a href="module-components_VisContinuous.html#updateScene">updateScene</a></li><li data-type='method'><a href="module-components_VisContinuous.html#visualise">visualise</a></li></ul></li><li><a href="module-components_VisDiscontinuous.html">components/VisDiscontinuous</a><ul class='methods'><li data-type='method'><a href="module-components_VisDiscontinuous.html#clear">clear</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#updateAvailable">updateAvailable</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#updateFrame">updateFrame</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#updateScene">updateScene</a></li><li data-type='method'><a href="module-components_VisDiscontinuous.html#visualise">visualise</a></li></ul></li><li><a href="module-components_VisTimeline.html">components/VisTimeline</a></li><li><a href="module-components_VisualisationTab.html">components/VisualisationTab</a><ul class='methods'><li data-type='method'><a href="module-components_VisualisationTab.html#loadOverview">loadOverview</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#render">render</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#save">save</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#visualise">visualise</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#visualiseTimeline">visualiseTimeline</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#~msecsToTick">msecsToTick</a></li><li data-type='method'><a href="module-components_VisualisationTab.html#~tickToMsecs">tickToMsecs</a></li></ul></li><li><a href="module-components_WebGLRenderer.html">components/WebGLRenderer</a><ul class='methods'><li data-type='method'><a href="module-components_WebGLRenderer.html#render">render</a></li><li data-type='method'><a href="module-components_WebGLRenderer.html#toDataURL">toDataURL</a></li></ul></li><li><a href="module-importers_csgo_import.html">importers/csgo/import</a><ul class='methods'><li data-type='method'><a href="module-importers_csgo_import.html#~importDemoBuffer">importDemoBuffer</a></li><li data-type='method'><a href="module-importers_csgo_import.html#~importDemoFile">importDemoFile</a></li></ul></li><li><a href="module-models.html">models</a></li><li><a href="module-web_app.html">web/app</a></li></ul><h3>Events</h3><ul><li><a href="global.html#event:error">error</a></li><li><a href="global.html#event:postrender">postrender</a></li><li><a href="global.html#event:render">render</a></li><li><a href="global.html#event:updateFrame">updateFrame</a></li><li><a href="global.html#event:visualise">visualise</a></li></ul><h3>Global</h3><ul><li><a href="global.html#app">app</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">components/SessionSelect.vue</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;template>
+	&lt;fieldset :disabled="all.length == 0">
+		&lt;div class="col-sm-12" v-for="session in selected" track-by="id">
+			&lt;div class="form-group form-group-flex">
+				&lt;select class="form-control" v-model="session.record" :disabled="all.length == 0" @change="sessionChange(session)">
+					&lt;option v-for="record in all" :value="record">
+						{{record.title}}
+					&lt;/option>
+				&lt;/select>
+
+				&lt;button type="button" class="btn btn-danger" @click="remove($index)">
+					&lt;span class="glyphicon glyphicon-minus-sign">&lt;/span>
+				&lt;/button>
+			&lt;/div>
+
+			&lt;div class="form-group">
+				&lt;label class="col-sm-4">Colour&lt;/label>
+				&lt;div class="col-sm-8">
+					&lt;input type="color" v-model="session.colour" class="form-control input-sm">
+				&lt;/div>
+			&lt;/div>
+		&lt;/div>
+
+		&lt;div class="form-group clearfix">
+			&lt;div class="col-sm-12">
+				&lt;button type="button" class="btn btn-success pull-right" @click="add">
+					&lt;i class="fa fa-gamepad">&lt;/i>
+					Add Session
+				&lt;/button>
+			&lt;/div>
+		&lt;/div>
+	&lt;/fieldset>
+&lt;/template>
+
+&lt;script type="text/babel">
+	/**
+	 * Component for displaying an array as a radio list.
+	 * @module components/SessionSelect
+	 *
+	 * @param {GameLevel} gameLevel
+	 * @param {Session[]} selected
+	 * @param {GameEvent[]} events
+	 */
+
+	const color = window.require('./dist/components/color/one-color-all-debug');
+
+	const _ = window.require('lodash');
+	const models = window.models;
+	const db = window.db;
+
+	const GOLDEN_RATIO_CONJUGATE = 0.618033988749895;
+	const HUE_SEED = Math.random();
+
+	let sessionUid = 0;
+
+	/**
+	 * @typedef {object} Session
+	 * @global
+	 * @property {number} id - Monotonic ID (unique per window).
+	 * @property {SessionRecord} record - Database record.
+	 * @property {number} minTick - First tick that an event occurred.
+	 * @property {number} maxTick - Last tick that an event occurred.
+	 * @property {string} colour - CSS hex string colour for this session.
+	 * @property {number[]} tickRange - Tick range for filtering. Only visualise data from between [min,max].
+	 */
+
+	/**
+	 * @typedef {object} SessionRecord
+	 * @global
+	 * @property {number} id - Database row ID
+	 * @property {string} level - Level name
+	 * @property {string} title - Session title
+	 * @property {string} game - Game name
+	 * @property {number} tickrate - Ticks per second
+	 */
+
+	/**
+	 * Definition of an event.
+	 * Note that this is not a specific instance of an event, but a schema for an event.
+	 * @typedef {object} GameEvent
+	 * @global
+	 * @property {string} name - Event name
+	 * @property {string[]} keys - Event data keys (e.g., ["weapon", "damage"])
+	 * @property {string[]} locations - Location keys (e.g., ["detonation", "origin"])
+	 * @property {string[]} entities - Entity keys (e.g., ["grenade", "player"])
+	 */
+
+	export default {
+		props: {
+			gameLevel: {
+				required: true
+			},
+			selected: {
+				required: true,
+				twoWay: true
+			},
+			events: {
+				required: true,
+				twoWay: true
+			}
+		},
+		data() {
+			return {
+				all: []
+			}
+		},
+		methods: {
+			/**
+			 * Add a new session.
+			 * Generates a new colour based on the colour of the previous session.
+			 * @instance
+			 * @memberof module:components/SessionSelect
+			 */
+			add() {
+				let hue = Math.random();
+
+				if (this.selected.length > 0) {
+					// add the golden ratio conjugate to the last hue
+					hue = color(this.selected[this.selected.length - 1].colour)
+						.hue(GOLDEN_RATIO_CONJUGATE, true)
+						.hue();
+				}
+
+				let c = new color.HSV(hue, 0.5, 0.95);
+
+				let session = {
+					id: sessionUid++,
+					record: this.all[0],
+					minTick: 0,
+					maxTick: 0,
+					colour: c.hex(),
+					tickRange: [0, 0]
+				};
+				this.selected.push(session);
+
+				// trigger a 'change' so we grab the tick range data
+				this.sessionChange(session);
+			},
+
+			/**
+			 * Remove a selected session.
+			 * @instance
+			 * @memberof module:components/SessionSelect
+			 * @param {number} index
+			 */
+			remove(index) {
+				this.selected.splice(index, 1);
+			},
+
+			/**
+			 * Find the minTick and maxTick for a session.
+			 * @instance
+			 * @memberof module:components/SessionSelect
+			 * @param {Session} session
+			 */
+			sessionChange(session) {
+				this.refreshEvents();
+
+				session.minTick = 0;
+				session.maxTick = 0;
+
+				models.Event.find({
+						attributes: [
+							[db.fn('min', db.col('tick')), 'minTick'],
+							[db.fn('max', db.col('tick')), 'maxTick']
+						],
+						where: {
+							session_id: session.record.id,
+						}
+					})
+					.then(result => {
+						session.minTick = result.get('minTick');
+						session.maxTick = result.get('maxTick');
+						session.tickRange = [session.minTick, session.maxTick];
+					})
+					.catch(err => this.$dispatch('error', err));
+			},
+
+			/**
+			 * Refresh sessions list.
+			 * @instance
+			 * @memberof module:components/SessionSelect
+			 */
+			refresh() {
+				this.all = [];
+
+				models.Session.findAll({
+						where: {
+							game: this.gameLevel.game,
+							level: this.gameLevel.level
+						},
+						attributes: ['id', 'level', 'title', 'game', 'tickrate'],
+						order: [['id', 'DESC']],
+					})
+					.then(sessions => {
+						this.all = sessions.map(x => _.toPlainObject(x.get({plain: true})));
+					})
+					.catch(err => this.$dispatch('error', err));
+			},
+
+			/**
+			 * Aggregate events from all selected sessions and determine the schema of each.
+			 * @instance
+			 * @memberof module:components/SessionSelect
+			 */
+			refreshEvents: _.debounce(function() {
+				const sessionIds = [].concat(this.selected)
+					.filter(s => s.record)
+					.map(s => s.record.id);
+
+				this.events = [];
+
+				if (!sessionIds.length) {
+					return;
+				}
+
+				console.time('session events');
+
+				db.query(`SELECT DISTINCT ON (name) name, data, locations, entities
+FROM events
+WHERE events.session_id IN (:sessionIds)
+ORDER BY name`, {
+						type: db.QueryTypes.SELECT,
+						replacements: {sessionIds: sessionIds}
+					})
+					.then(results => {
+						this.events = results.map(row => {
+							return {
+								name: row.name,
+								keys: _.keys(row.data),
+								locations: _.keys(row.locations),
+								entities: _.keys(row.entities)
+							}
+						});
+
+						console.timeEnd('session events');
+					})
+					.catch(err => this.$dispatch('error', err));
+			}, 250)
+		},
+		ready() {
+			this.selected = [];
+
+			this.$watch('gameLevel', this.refresh.bind(this));
+			this.$watch('all', this.refreshEvents.bind(this));
+			this.$watch('selected', this.refreshEvents.bind(this));
+		}
+	}
+&lt;/script>
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Mar 29 2016 10:03:12 GMT+0100 (BST) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
